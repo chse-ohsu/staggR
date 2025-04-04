@@ -1,5 +1,11 @@
 library(tidytable)
 
+#' Examine the dataset from SUDW
+sq <- readRDS(file.path("~/.sud_data/qt_pos/curated/qt_pos_state_qtr_20241213.RDS"))
+pq <- readRDS(file.path("~/.sud_data/qt_pos/curated/qt_pos_person_qtr_20241213.RDS"))
+
+
+
 foo <- tidytable(guid = unique(purrr::map_chr(1:1000,
                                        function(x) {
                                          paste0(sample(c(LETTERS, 0:9), 12, replace = TRUE), collapse = "")
@@ -54,10 +60,22 @@ foo %>%
          yr_2018 = 1,
          yr_2019 = 1,
          yr_2020 = 1) %>%
-  pivot_longer(cols = starts_with("yr_"), names_to = "yr", values_to = "foo",
+  pivot_longer(cols = starts_with("yr_"), names_to = "yr", values_to = "fu_yr",
                names_prefix = "yr_") %>%
-  select(-foo) %>%
-  arrange(guid, yr)
+  arrange(guid, yr) %>%
+  mutate(fu_yr = cumsum(fu_yr),
+         futime = runif(n = 1, min = 1, max = 11),
+         .by = guid) %>%
+  mutate(dt = case_when(fu_yr = is.na(intervention_dt) ~ ymd("2010-01-01") +
+                          days(as.integer(round(runif(n = 1,
+                                                      min = 0,
+                                                      max = as.numeric(ymd("2020-01-01") -
+                                                                         ymd("2010-01-01"))), 1))),
+                        TRUE ~ intervention_date + days(round(rnorm(n, mean = 0, sd = 365))))
+
+  # Make follow-up time variable within guids
+  mutate(, by = guid) %>%
+  filter(fy_yr <= futime)
 
   mutate(grp_intercept = rnorm(n = 1, mean = 0, sd = 0.1),
          grp_tx_effect = rnorm(n = 1, mean = 0, sd = 0.01),
