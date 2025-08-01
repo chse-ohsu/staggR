@@ -233,4 +233,9 @@ hosp %<>%
          y = rbinom(.N, 1, prob)) # Simulate outcome
 
 
+# Restrict to necessary columns
+hosp %<>%
+  select(guid, age, sex, comorb, grp, intervention_dt, tx, cohort, yr, y) %>%
+  as.data.frame()
+
 usethis::use_data(hosp, overwrite = TRUE)
