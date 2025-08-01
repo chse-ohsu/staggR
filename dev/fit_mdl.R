@@ -130,61 +130,7 @@ define_fes(y = "y",
            covariates = c("age", "sex", "comorb"))
 
 #' Function to convert categorical cohort & time to dummy variables
-prep_data <- function(df, cohort_var, cohort_ref=NULL, time_var, time_ref=NULL) {
-  # Make sure df is a data.frame
-  df <- as.data.frame(df)
 
-  # Validate cohort_var and time_var names
-  if(!cohort_var %in% colnames(df)) {
-    stop(paste0("Column '", cohort_var, "' not found in data."))
-  }
-  if(length(levels(factor(df[[cohort_var]]))) < 3) {
-    stop(paste0("Column '", cohort_var, "' must contain at least 3 levels."))
-  }
-  if(!time_var %in% colnames(df)) {
-    stop(paste0("Column '", time_var, "' not found in data."))
-  }
-  if(length(levels(factor(df[[time_var]]))) < 3) {
-    stop(paste0("Column '", time_var, "' must contain at least 3 levels."))
-  }
-
-  # Identify referents if not passed through params
-  if(is.null(cohort_ref)) {
-    cohort_ref <- levels(factor(df[[cohort_var]]))[[1]]
-    time_ref <- levels(factor(df[[time_var]]))[[1]]
-  }
-
-  # Identify all levels of cohort/time variables and exclude the referents
-  cohort_lvls <- levels(factor(df[[cohort_var]][df[[cohort_var]] != cohort_ref]))
-  time_lvls <- levels(factor(df[[time_var]][df[[time_var]] != time_ref]))
-
-  # Create dummy variables for cohorts
-  cohort_dummies <- stats::model.matrix(stats::reformulate(cohort_var, intercept = FALSE, response = NULL),
-                                        data = df)
-
-  # Add an underscore between the cohort column name and the cohort number
-  colnames(cohort_dummies) <- gsub(cohort_var, paste0(cohort_var, "_"), colnames(cohort_dummies))
-
-  # Create dummy variables for time periods
-  time_dummies <- stats::model.matrix(stats::reformulate(time_var, intercept = FALSE, response = NULL),
-                                      data = df)
-
-  # Add an underscore between the time period column name and the time period number
-  colnames(time_dummies) <- gsub(time_var, paste0(time_var, "_"), colnames(time_dummies))
-
-  # Drop reference groups
-  cohort_dummies <- cohort_dummies[ , colnames(cohort_dummies) != paste0(cohort_var, "_", cohort_ref)]
-  time_dummies <- time_dummies[ , colnames(time_dummies) != paste0(time_var, "_", time_ref)]
-
-  # Convert to integer
-  cohort_dummies <- apply(cohort_dummies, 2, as.integer)
-  time_dummies <- apply(time_dummies, 2, as.integer)
-
-  # Combine with original data, omitting the orignial cohort and time variables
-  return(cbind(df[, !(names(df) %in% c(cohort_var, time_var))],
-               cohort_dummies,
-               time_dummies))
-}
 
 #' ****************************************************************************************************
 #' # Fit model
@@ -267,7 +213,7 @@ cohort_ref <- "0"
 #' TODO: Here I'm building the modeling function, which takes a simple data set,
 #' preps it for modeling, runs the model & the vcov, and returns a summary object.
 
-sdid <- function(data, y, cohort_var, time_var, covariates = NULL, time_refs = NULL, cohort_ref = NULL) {
+sdid <- function(data, y, cohort_var, time_var, covariates = NULL, time_refs = NULL, cohort_ref = NULL, .vcov = stats::vcov, ...) {
   # Prepare data by creating dummy variables
   df <- prep_data(df = data,
                   cohort_var = cohort_var,
@@ -302,16 +248,23 @@ sdid <- function(data, y, cohort_var, time_var, covariates = NULL, time_refs = N
                covariates),
              collapse = " + "))
   )
-  return(df)
+
+  # Fit model
+  mdl <- lm(formula = fml,
+            data = df)
+  vcv <- .vcov(mdl, ...)
+
+  rslts <- list()
+  return(vcv)
 }
 
-names(as.list(sort(unlist(cohort_dummies))[2:length(cohort_dummies)]))
-
-sdid(y = "y",
-     cohort = "cohort",
-     time = "yr",
+sdid(data = hosp %>% mutate(new_cohort = case_when(cohort == "0" ~ "0",
+                                                   TRUE ~ paste0("201", cohort))),
+     y <- "y",
+     cohort_var = "new_cohort",
+     time_var = "yr",
      covariates = c("age", "sex", "comorb"),
-     data = foo)
+     cohort_ref = "0")
 
 #' ****************************************************************************************************
 #' # Fit models
