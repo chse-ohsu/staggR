@@ -1,9 +1,9 @@
 #' ********************
 #' ## Load Required Packages
 
-# library(tidytable)
-# library(magrittr)
-# library(janitor)
+library(tidytable)
+library(magrittr)
+library(janitor)
 # library(sandwich)
 # library(lmtest)
 devtools::load_all()

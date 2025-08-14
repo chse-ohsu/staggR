@@ -72,15 +72,31 @@ sdid <- function(df, y, cohort_var, time_var, covariates = NULL, time_refs = NUL
   return(rslts)
 }
 
-foo <- sdid(df = hosp %>% mutate(new_cohort = case_when(cohort == "0" ~ "0",
-                                                   TRUE ~ paste0("201", cohort))),
-     y <- "y",
-     cohort_var = "new_cohort",
-     time_var = "yr",
-     covariates = c("age", "sex", "comorb"),
-     cohort_ref = "0")
+#' Prep the dataset for modeling
+newhosp <- hosp %>% mutate(new_cohort = case_when(cohort == "0" ~ "0",
+                                                  TRUE ~ paste0("201", cohort)))
+
+foo <- sdid(df = newhosp,
+            y <- "y",
+            cohort_var = "new_cohort",
+            time_var = "yr",
+            covariates = c("age", "sex", "comorb"),
+            cohort_ref = "0")
 
 
 class(foo)
 names(foo)
 
+ave_coeff(sdid = foo,
+          df = newhosp,
+          select_vars = NULL,
+          cohort_numbers = 5:8,
+          tsi_numbers = 0:5,
+          cohort_name = "cohort")
+
+sdid = foo
+df = newhosp
+select_vars = NULL
+cohort_numbers = 5:8
+tsi_numbers = 0:5
+cohort_name = "cohort"

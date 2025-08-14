@@ -12,7 +12,8 @@
 #' @return data.frame
 #' @export ave_coeff
 
-ave_coeff <- function(mdl, df, vcv, select_vars=NULL, cohort_name, cohort_numbers, tsi_numbers, pop_var=NULL){
+ave_coeff <- function(sdid, df, select_vars=NULL, cohort_name, cohort_numbers, tsi_numbers, pop_var=NULL){
+
   ## Step 1: Translate cohort / time since intervention information to variables to use
   if (is.null(select_vars)){
 
@@ -20,7 +21,7 @@ ave_coeff <- function(mdl, df, vcv, select_vars=NULL, cohort_name, cohort_number
     select_vars <- unlist(lapply(cohort_numbers, function(cohort_number)  paste0(cohort_name, "_", sprintf("%01.0f",cohort_number), ":yr_", sprintf("%02.0f", 2010 + cohort_number + tsi_numbers))))
 
     ## Select those included in the regression (some may not due to left / right censoring)
-    select_vars <- select_vars[select_vars %in% names(mdl$coef)]
+    select_vars <- select_vars[select_vars %in% names(sdid$mdl$coef)]
 
   }
 
@@ -43,7 +44,7 @@ ave_coeff <- function(mdl, df, vcv, select_vars=NULL, cohort_name, cohort_number
 
 
     ## Extract estimates selected for averaging
-    select_est  <- sapply(select_vars, function(x) mdl$coef[names(mdl$coef)== x])
+    select_est  <- sapply(select_vars, function(x) sdid$mdl$coef[names(sdid$mdl$coef)== x])
 
 
     ## Step 3: Calculate average estimate and corresponding SE, p-value, CI
@@ -60,7 +61,7 @@ ave_coeff <- function(mdl, df, vcv, select_vars=NULL, cohort_name, cohort_number
     ave_se <- as.vector(sqrt(t(as.matrix(ave_pct)) %*% select_vcv %*% as.matrix(ave_pct)))
 
     ## Extract degrees of freedom, which we use for our P value
-    df <- mdl$df.residual
+    df <- sdid$mdl$df.residual
 
     ## Calculate p-value, assuming normal distribution
     ave_pval <-  2*pt(abs(ave_est/ave_se), df, lower=FALSE)

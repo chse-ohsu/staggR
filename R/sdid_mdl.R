@@ -5,7 +5,7 @@
 #'
 #' @return An object of class "sdid_mdl"
 #' @export
-new_sdid <- function(model, vcov = NULL) {
+new_sdid <- function(mdl, vcov = NULL) {
   structure(
     list(
       mdl = mdl,
