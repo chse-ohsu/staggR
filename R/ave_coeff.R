@@ -1,4 +1,4 @@
-#' Prepare a data frame to work with sdid() function
+#' Aggregate a specified set of terms and corresponding standard errors from an sdid model object
 #'
 #' @param mdl
 #' @param df data frame containing the variables in the model
@@ -12,31 +12,56 @@
 #' @return data.frame
 #' @export ave_coeff
 
-ave_coeff <- function(sdid, df, select_vars=NULL, cohort_name, cohort_numbers, tsi_numbers, pop_var=NULL){
+sdid = foo
+df = hosp
+# coefs = NULL
+coefs <- c("cohort_5:yr_2013", "cohort_6:yr_2014", "cohort_7:yr_2015")
+# cohorts = NULL
+cohorts <- c("5", "6")
+times = NULL
+# tsi <- NULL
+tsi = -7:-2
 
-  ## Step 1: Translate cohort / time since intervention information to variables to use
-  if (is.null(select_vars)){
+ave_coeff <- function(sdid, df, coefs = NULL, cohorts = NULL, times = NULL, tsi = NULL) {
 
-    ## For each cohort and time since intervention, translate into cohort-study_quarter interaction term
-    select_vars <- unlist(lapply(cohort_numbers, function(cohort_number)  paste0(cohort_name, "_", sprintf("%01.0f",cohort_number), ":yr_", sprintf("%02.0f", 2010 + cohort_number + tsi_numbers))))
-
-    ## Select those included in the regression (some may not due to left / right censoring)
-    select_vars <- select_vars[select_vars %in% names(sdid$mdl$coef)]
-
+  # Step 1: Identify cohort / time-since-intervention / individual time periods to summarize
+  ## Case A: The user did not specify coefs
+  if(is.null(coefs)) {
+    coefs <- select_terms(mdl = sdid, selection = list(cohorts = cohorts,
+                                                        times = times,
+                                                        tsi = tsi))
   }
 
-  # Only run the rest of the function if there are select vars left after filtering by those in the model.
-  # This is necessary because we sometimes omit terms in the model when there are no observations corresponding
-  # to the interaction.
-  if(length(select_vars) > 0) {
+  ## Case B: The user specified coefs
+  if(!is.null(coefs)) {
+    # If times or tsi is specified, issue a warning that it will be ignored.
+    if(!is.null(times) | !is.null(tsi)) warning("If `coefs` is specified, supplied values for `times` and `tsi` will be ignored.")
+
+    # Check whether the user simply asked for the entire pre- or post-intervention period
+    prepost <- all(grepl(pattern = "^pre|^post", x = coefs))
+    if(prepost) {
+      requested_period <- regmatches(coefs, regexpr("^pre|^post", coefs))
+      coefs <- select_period(mdl = sdid, period = requested_period)
+    } else coefs <- select_terms(mdl = sdid, coefs = coefs)
+  }
+
+  # Only run the rest of the function if there are select vars left after the filtering
+  # and checks in calls to select_terms() above.
+  if(length(coefs) > 0) {
 
     ## Step 2: Calculate population fractions and extract estimates
 
     ## Number of observations
     if (is.null(pop_var)) {
-      ave_num <- sapply(select_vars, function(select_var) nrow(df[eval(parse(text=paste(unlist(strsplit(select_var, ":")), "==1", sep="", collapse=" & "))),]))
+      ave_num <- sapply(select_vars, function(select_var) {
+        nrow(df[eval(parse(text=paste(unlist(strsplit(select_var, ":")), "==1",
+                                      sep="", collapse=" & "))),])
+        })
     } else {
-      ave_num <- sapply(select_vars, function(select_var)      df[eval(parse(text=paste(unlist(strsplit(select_var, ":")), "==1", sep="", collapse=" & "))),sum(get(pop_var))])
+      ave_num <- sapply(select_vars, function(select_var) {
+        df[eval(parse(text=paste(unlist(strsplit(select_var, ":")), "==1",
+                                 sep="", collapse=" & "))),sum(get(pop_var))]
+        })
     }
 
     ## Pct of population for each coefficient
@@ -64,7 +89,7 @@ ave_coeff <- function(sdid, df, select_vars=NULL, cohort_name, cohort_numbers, t
     df <- sdid$mdl$df.residual
 
     ## Calculate p-value, assuming normal distribution
-    ave_pval <-  2*pt(abs(ave_est/ave_se), df, lower=FALSE)
+    ave_pval <- stats::qnorm(0.975)*pt(abs(ave_est/ave_se), df, lower=FALSE)
 
     ## Make into a df table
     ave_res <- data.table(est  = ave_est,

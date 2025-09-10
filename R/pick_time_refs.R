@@ -14,14 +14,17 @@ pick_time_refs <- function(df, cohort_var, cohort_ref, time_var, time_offset = -
   if(!time_var %in% names(df)) stop("Invalid time_var")
 
   cohort_lvls <- sort(unique(df[[cohort_var]][df[[cohort_var]] != cohort_ref]))
-  time_lvls <- unique(df[[time_var]])
+  time_lvls <- sort(unique(df[[time_var]]))
 
   time_refs <- lapply(1:length(cohort_lvls), function(i) {
     time_ref <- as.character(as.integer(cohort_lvls[[i]]) + time_offset)
     if(time_ref %in% time_lvls) {
       return(time_ref)
     } else {
-      stop("No corresponding time period level for cohort index ", cohort_lvls[[i]])
+      stop("No time period level '", time_ref,
+           "' corresponding to cohort index ", cohort_lvls[[i]], "\n",
+           "Either pass a named list to parameter `time_refs` or ",
+           "make sure cohort levels match time period levels.")
     }
   })
   names(time_refs) <- cohort_lvls

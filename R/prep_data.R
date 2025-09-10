@@ -35,12 +35,16 @@ prep_data <- function(df, cohort_var, cohort_ref=NULL, time_var, time_ref=NULL) 
   # Identify referents if not passed through params
   if(is.null(cohort_ref)) {
     cohort_ref <- levels(factor(df[[cohort_var]]))[[1]]
+  }
+  if(is.null(time_ref)) {
     time_ref <- levels(factor(df[[time_var]]))[[1]]
   }
 
-  # Identify all levels of cohort/time variables and exclude the referents
+  # Identify all levels of cohort variables and exclude the referents
   cohort_lvls <- levels(factor(df[[cohort_var]][df[[cohort_var]] != cohort_ref]))
-  time_lvls <- levels(factor(df[[time_var]][df[[time_var]] != time_ref]))
+
+  # Identify all levels of time variables
+  time_lvls <- levels(factor(df[[time_var]]))
 
   # Create dummy variables for cohorts
   cohort_dummies <- stats::model.matrix(stats::reformulate(cohort_var, intercept = FALSE, response = NULL),
@@ -56,9 +60,8 @@ prep_data <- function(df, cohort_var, cohort_ref=NULL, time_var, time_ref=NULL) 
   # Add an underscore between the time period column name and the time period number
   colnames(time_dummies) <- gsub(time_var, paste0(time_var, "_"), colnames(time_dummies))
 
-  # Drop reference groups
+  # Drop reference groups from cohort
   cohort_dummies <- cohort_dummies[ , colnames(cohort_dummies) != paste0(cohort_var, "_", cohort_ref)]
-  time_dummies <- time_dummies[ , colnames(time_dummies) != paste0(time_var, "_", time_ref)]
 
   # Convert to integer
   cohort_dummies <- apply(cohort_dummies, 2, as.integer)
