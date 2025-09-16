@@ -4,7 +4,17 @@
 \alias{new_sdid}
 \title{Constructor for a sdid_mdl object}
 \usage{
-new_sdid(mdl, vcov = NULL, tsi, key_vars)
+new_sdid(
+  mdl,
+  formula,
+  vcov = NULL,
+  tsi,
+  obs_cnt,
+  cohort,
+  time,
+  intervention_var,
+  covariates
+)
 }
 \arguments{
 \item{vcov}{A variance-covariance matrix}

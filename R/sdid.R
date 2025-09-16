@@ -1,14 +1,14 @@
 #' Fit a staggered difference-in-differences model
 #'
+#' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under 'Details'.
 #' @param df data frame containing the variables in the model.
-#' @param y name of the dependent variable in `df`.
-#' @param cohort_var name of the variable in `df` that contains cohort assignments.
-#' @param cohort_ref value of `cohort_var` that serves as the referent for main effects for cohorts.
-#' @param cohort_time_refs a list, whose elements are named to match levels of `cohort_var`, specifying the value of `time_var` that serves as the referent for each time interaction with values of `cohort_var`.
-#' @param time_var name of the variable in `df` that contains time periods.
-#' @param time_ref value of `time_var` that serves as the referent for main effects for time periods.
+#' @param weights an optional vector of weights to be passed to `lm()` to be used in the fitting process. Should be NULL or a numeric vector.
+#' @param cohort_var name of the variable in `df` that contains cohort assignments. If NULL, this is assumed to be the first column named in the right hand side of `formula`.
+#' @param cohort_ref value of `cohort_var` that serves as the referent for main effects for cohorts. If NULL, this is assumed to the be the first value in the set of values for `cohort_var`.
+#' @param cohort_time_refs a list, whose elements are named to match levels of `cohort_var`, specifying the value of `time_var` that serves as the referent for each time interaction with values of `cohort_var`. See 'Details.'
+#' @param time_var name of the variable in `df` that contains time periods. If NULL, this is assumed to be the second column named in the right hand side of `formula`.
+#' @param time_ref value of `time_var` that serves as the referent for main effects for time periods. If NULL, this is assumed to the be the first value in the set of values for `time_var`.
 #' @param intervention_var name of the cohort-level variable in `df` that specifies which values in `time_var` correspond to the first post-intervention time period for each cohort.
-#' @param covariates character vector containing names of columns in `df` that should be added to independent variables as adjustments.
 #' @param .vcov Function to be used to estimate the variance-covariance matrix. Defaults to stats::vcov
 #' @param ... additional arguments to be passed to `.vcov`.
 #'
@@ -20,7 +20,7 @@ sdid <- function(formula,
                  weights = NULL,
                  cohort_var = NULL, cohort_ref = NULL, cohort_time_refs = NULL,
                  time_var = NULL, time_ref = NULL,
-                 intervention_var, covariates = NULL, .vcov = stats::vcov, ...) {
+                 intervention_var, .vcov = stats::vcov, ...) {
 
   # Make sure df is a data.frame
   df <- as.data.frame(df)

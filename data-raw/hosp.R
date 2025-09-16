@@ -2,14 +2,9 @@ library(tidytable)
 library(lubridate)
 library(janitor)
 
-#' Examine the dataset from SUDW
-# sq <- readRDS(file.path("~/.sud_data/qt_pos/curated/qt_pos_state_qtr_20241213.RDS"))
-# pq <- readRDS(file.path("~/.sud_data/qt_pos/curated/qt_pos_person_qtr_20241213.RDS"))
-# pqr <- pq %>% select(hash_id, yr, qtr, state_abbr, grp, waiver_dt, cohort, study_qtr)
-
 set.seed(40089)
 hosp <-
-  # Generate 10k unique guids
+  # Generate 10k unique Globally Unique IDs (guids)
   tidytable(guid = unique(purrr::map_chr(1:10000,
                                          function(x) {
                                            paste0(sample(c(LETTERS, 0:9), 12, replace = TRUE), collapse = "")
@@ -233,9 +228,40 @@ hosp %<>%
          y = rbinom(.N, 1, prob)) # Simulate outcome
 
 
-# Restrict to necessary columns
+# Restrict to necessary columns, identify intervention year, and make some columns more intuitive
 hosp %<>%
-  select(guid, age, sex, comorb, grp, intervention_dt, tx, cohort, yr, y) %>%
+  left_join(tidytable(grp = LETTERS[1:15],
+                      county = c("Pine Hollow County",
+                                 "Mapleford County",
+                                 "Stonefield County",
+                                 "Ashbrook County",
+                                 "Silver Run County",
+                                 "Meadowridge County",
+                                 "Briar Glen County",
+                                 "Northhaven County",
+                                 "Driftwood County",
+                                 "Clearfork County",
+                                 "Cinder Bluff County",
+                                 "Otter Pop County",
+                                 "Banana Peel County",
+                                 "Moonwhistle County",
+                                 "Pickle Springs County")),
+            by = "grp") %>%
+  mutate(policy_yr = lubridate::year(intervention_dt)) %>%
+  rename(hospitalized = y,
+         intervention_yr = policy_yr) %>%
+  select(guid, county, intervention_dt, intervention_yr, age, sex, comorb,
+         cohort, yr, hospitalized) %>%
   as.data.frame()
 
+# Make an aggregated version of the dataset
+hosp_agg <- hosp %>%
+  summarise(pct_y = mean(y),
+            n_enr = n_distinct(guid),
+            mean_age = mean(age),
+            pct_fem = mean(sex == "F"),
+            pct_cmb = mean(comorb),
+            .by = c("yr", "grp", "cohort", "policy_yr"))
+
 usethis::use_data(hosp, overwrite = TRUE)
+usethis::use_data(hosp_agg, overwrite = TRUE)

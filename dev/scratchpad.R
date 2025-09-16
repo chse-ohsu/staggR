@@ -61,3 +61,23 @@ ave_coeff(sdid = fooagg,
 ave_coeff(sdid = fooagg,
           coefs = select_period(mdl = fooagg,
                                 period = "post"))
+
+
+
+### Argument assignments for troubleshooting
+
+formula <- "y ~ cohort + yr + age + sex + comorb"
+df = hosp
+weights = NULL
+intervention_var = "policy_yr"
+cohort_var = NULL; cohort_ref = NULL; cohort_time_refs = NULL;
+time_var = NULL; time_ref = NULL;
+covariates = NULL; .vcov = stats::vcov
+
+formula <- "pct_y ~ cohort + yr + mean_age + pct_fem + pct_cmb"
+weights = "n_enr"
+df = hosp_agg
+intervention_var = "policy_yr"
+cohort_var = NULL; cohort_ref = NULL; cohort_time_refs = NULL;
+time_var = NULL; time_ref = NULL;
+covariates = NULL; .vcov = stats::vcov

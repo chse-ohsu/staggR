@@ -2,36 +2,30 @@
 % Please edit documentation in R/ave_coeff.R
 \name{ave_coeff}
 \alias{ave_coeff}
-\title{Prepare a data frame to work with sdid() function}
+\title{Aggregate a specified set of terms and corresponding standard errors from an sdid model object}
 \usage{
-ave_coeff(
-  sdid,
-  df,
-  select_vars = NULL,
-  selection = NULL,
-  cohort_var,
-  time_var,
-  pop_var = NULL
-)
+ave_coeff(sdid, coefs)
 }
 \arguments{
+\item{mdl}{sdid object containing the model to summarize}
+
 \item{df}{data frame containing the variables in the model}
 
-\item{select_vars}{list of variables selected for averaging; if NULL, then [SOMETHING] must be specified}
-
-\item{pop_var}{name of variable showing population numbers (aggregate data only); if NULL, use nrow (i.e., number of rows = number of observations)}
-
 \item{vcv}{variance-covariance corresponding to `mdl`}
+
+\item{select_vars}{list of variables selected for averaging; if NULL, then [SOMETHING] must be specified}
 
 \item{cohort_name}{character string for how cohorts are named. Must be specified if `select_vars` is NULL.}
 
 \item{cohort_numbers}{list of cohort numbers selected for averaging. Must be specified if `select_vars` is NULL.}
 
 \item{tsi_numbers}{list of time-since-intervention periods selected for averaging. Must be specified if `select_vars` is NULL.}
+
+\item{pop_var}{name of variable showing population numbers (aggregate data only); if NULL, use nrow (i.e., number of rows = number of observations)}
 }
 \value{
 data.frame
 }
 \description{
-Prepare a data frame to work with sdid() function
+Aggregate a specified set of terms and corresponding standard errors from an sdid model object
 }

@@ -4,12 +4,12 @@
 \alias{select_terms}
 \title{Retrieve a list of interaction terms from a sdid model to be passed on for aggregation}
 \usage{
-select_terms(mdl, vars = NULL, selection)
+select_terms(mdl, coefs = NULL, selection = NULL)
 }
 \arguments{
 \item{mdl}{sdid object}
 
-\item{vars}{optional list of specific terms from `mdl` to be selected}
+\item{coefs}{optional list of specific terms from `mdl` to be selected}
 
 \item{selection}{list object containing values for named elements `cohorts`, `times`, and `tsi`. `cohorts` contains a character vector of cohort levels to include in the term selection; `times` contains a character vector of time period levels to include in the term selection; and `tsi` contains a vector of integers representing the number of units of time relative to each cohort's intervention to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected. One of `times` or `tsi` must be specified. If both are specified, `times` is ignored.}
 }

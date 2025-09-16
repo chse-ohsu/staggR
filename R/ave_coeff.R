@@ -1,6 +1,6 @@
 #' Aggregate a specified set of terms and corresponding standard errors from an sdid model object
 #'
-#' @param mdl
+#' @param mdl sdid object containing the model to summarize
 #' @param df data frame containing the variables in the model
 #' @param vcv variance-covariance corresponding to `mdl`
 #' @param select_vars list of variables selected for averaging; if NULL, then [SOMETHING] must be specified
