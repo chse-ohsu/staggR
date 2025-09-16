@@ -71,12 +71,14 @@ select_terms <- function(mdl, coefs = NULL, selection = NULL) {
     tsi <- tsi[tsi$time != tsi$time_ref,]
 
     # If there are invalid tsis passed through the selection list, display a warning
-    # invalid_tsis <-
     for(cohort in unique(tsi$cohort)) {
-      warning(paste0("Supplied `tsi` value(s) (",
-                     paste(selection$tsi[!(selection$tsi %in% tsi[tsi$cohort == cohort, "tsi"])],
-                           collapse = ", "),
-                     ") are invalid for cohort ", cohort, "."))
+      invalid_tsi <- selection$tsi[!(selection$tsi %in% tsi[tsi$cohort == cohort, "tsi"])]
+      if(length(invalid_tsi) > 0) {
+        warning(paste0("Supplied `tsi` value(s) (",
+                       paste(invalid_tsi,
+                             collapse = ", "),
+                       ") are invalid for cohort ", cohort, "."))
+      }
     }
 
     # Now retrieve the values of the relevant interaction terms

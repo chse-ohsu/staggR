@@ -4,7 +4,7 @@
 #' @param cohorts character vector containing cohort levels to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected.
 #'
 #' @return character vector
-#' @export select_terms
+#' @export select_period
 
 select_period <- function(mdl, period = "post", cohorts = NULL) {
   # Validate that period is "pre" or "post"

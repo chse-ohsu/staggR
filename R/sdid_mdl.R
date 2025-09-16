@@ -6,7 +6,7 @@
 #' @return An object of class "sdid_mdl"
 #' @export
 
-new_sdid <- function(mdl, vcov = NULL, tsi, cohort, time, intervention_var, covariates) {
+new_sdid <- function(mdl, formula, vcov = NULL, tsi, obs_cnt, cohort, time, intervention_var, covariates) {
   if(!all(!vapply(cohort[c("var", "ref", "time_refs")], is.null, logical(1)))) {
     stop("cohort must contain a list with elements var, ref, and time_refs.")
   }
@@ -18,8 +18,10 @@ new_sdid <- function(mdl, vcov = NULL, tsi, cohort, time, intervention_var, cova
   structure(
     list(
       mdl = mdl,
+      formula = formula,
       vcov = vcov,
       tsi = tsi,
+      obs_cnt = obs_cnt,
       cohort = cohort,
       time = time,
       intervention_var = intervention_var,
