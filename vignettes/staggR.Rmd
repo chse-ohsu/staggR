@@ -1,0 +1,70 @@
+---
+title: "staggR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{staggR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+staggR: fit difference-in-differences models with staggered interventions
+=====================
+
+The `staggR` package makes it easy to fit linear difference-in-differences models in cases where intervention roll-outs are staggered over time. 
+
+## Explore the didactic data
+
+Consider as a didactic example a policy intervention designed to reduce inpatient hospitalizations in 15 counties. This longitudinal data set has one row per individual-year. Each individual in the data set is identified by a globally unique identifier (`guid`), and we have measures of the individuals' ages, sexes, and comorbidities, and an indicator showing whether the individual was hospitalized during the current year. 
+
+```{r setup}
+library(staggR)
+head(hosp, 20)
+```
+
+In this data set, the column `intervention_yr` tells us the year during which each county implemented the intervention. If `intervention_yr` is `NA`, we can conclude that the county never implented the intervention. We observe that, among the 15 counties in the data set, 3 counties implemented the intervention in 2015; 2 counties implemented in 2016; 5 counties implemented in 2017; 1 county implemented in 2018; and 4 counties did not implement the intervention at all during the study period, which runs for 11 years, from 2010 through 2020. 
+
+```{r}
+with(hosp,
+     table(county, intervention_yr, useNA = "ifany"))
+
+with(hosp,
+     table(county, yr))
+```
+
+Hospitalizations occurred in every county-year. 
+
+```{r}
+stats::xtabs(hospitalized ~ county + yr, 
+             data = hosp)
+```
+
+Visualize hospitalizations relative to intervention.
+
+```{r tsplot, fig.width = 10, fig.height = 6, out.width = "100%"}
+# Calculate time, in years, relative to the intervention year
+hosp$tsi <- as.integer(hosp$yr) - as.integer(hosp$intervention_yr)
+
+# Aggregate to county-year
+agg <- aggregate(hospitalized ~ county + tsi,
+                 data = hosp,
+                 FUN = mean)
+## TODO: This plot omits non-intervention counties. Can I add them? 
+library(ggplot2)
+ggplot(data = agg,
+       aes(x = tsi, y = hospitalized)) +
+  facet_wrap(~ county, ncol = 3) +
+  geom_line(stat = "identity", linewidth = 1.0, alpha = 0.8) +
+  geom_vline(xintercept = 0, colour = "grey") +
+  scale_x_continuous(name = "Years since intervention",
+                     breaks = seq(-8, 5, by = 2)) +
+  scale_y_continuous(name = "Percent hospitalized") +
+  theme_minimal()
+```
+

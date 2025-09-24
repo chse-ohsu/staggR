@@ -32,6 +32,10 @@ prep_data <- function(df, cohort_var, cohort_ref=NULL, time_var, time_ref=NULL) 
     stop(paste0("Column '", time_var, "' must contain at least 3 levels."))
   }
 
+  # If cohort_var or time_var are not factors, convert them to factors
+  if(class(df[[cohort_var]]) != "factor") df[[cohort_var]] <- factor(df[[cohort_var]])
+  if(class(df[[time_var]]) != "factor") df[[time_var]] <- factor(df[[time_var]])
+
   # Identify referents if not passed through params
   if(is.null(cohort_ref)) {
     cohort_ref <- levels(factor(df[[cohort_var]]))[[1]]

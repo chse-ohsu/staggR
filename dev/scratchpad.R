@@ -72,7 +72,7 @@ weights = NULL
 intervention_var = "policy_yr"
 cohort_var = NULL; cohort_ref = NULL; cohort_time_refs = NULL;
 time_var = NULL; time_ref = NULL;
-covariates = NULL; .vcov = stats::vcov
+.vcov = stats::vcov
 
 formula <- "pct_y ~ cohort + yr + mean_age + pct_fem + pct_cmb"
 weights = "n_enr"
@@ -81,3 +81,32 @@ intervention_var = "policy_yr"
 cohort_var = NULL; cohort_ref = NULL; cohort_time_refs = NULL;
 time_var = NULL; time_ref = NULL;
 covariates = NULL; .vcov = stats::vcov
+
+
+
+#' ****************************************************************************************************
+#' # Experiment with qt_pos data
+load("dev/c1d0.RData")
+fml_covariates1_detrend0
+df_qtpos <- pq %>%
+  select(hash_id, state_abbr,
+         residential,
+         waiver_dt,
+         cohort, study_qtr, yr, qtr,
+         age_grp, sex, elig_grp, mh, sud) %>%
+  # Study quarter corresponding to waiver_dt takes same value as cohort
+  mutate(waiver_qtr = cohort)
+
+
+qtpos <- sdid("residential ~ cohort + study_qtr + age_grp + sex + elig_grp + mh + sud",
+              df = df_qtpos,
+              intervention_var = "waiver_qtr",
+              .vcov = sandwich::vcovCL,
+              cluster = df_qtpos$state_abbr)
+
+ave_coeff(sdid = qtpos,
+          coefs = select_period(mdl = qtpos,
+                                period = "pre"))
+ave_coeff(sdid = qtpos,
+          coefs = select_period(mdl = qtpos,
+                                period = "post"))

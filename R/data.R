@@ -1,14 +1,17 @@
-#' World Health Organization TB data
+#' Hospitalization data
 #'
-#' A subset of data from the World Health Organization Global Tuberculosis
+#' A simulated data set of 15 counties, 11 of which implemented a policy intervention during 2015 - 2018 to reduce hospitalizations. The data set is longitudinal, with each row corresponding to an individual-year.
+#'
 #' Report ...
 #'
 #' @format ## `hosp`
-#' A data frame with 7,240 rows and 60 columns:
+#' A data frame with 31,040 rows and 10 columns:
 #' \describe{
-#'   \item{country}{Country name}
-#'   \item{iso2, iso3}{2 & 3 letter ISO country codes}
-#'   \item{year}{Year}
+#'   \item{guid}{Globally unique identifier for individuals living in the 15 counties}
+#'   \item{county}{County names}
+#'   \item{intervention_dt}{Date on which each county implemented their policy intervention to reduce hospitalizations}
+#'   \item{intervention_yr}{Year during which `intervention_dt` takes place}
+#'   \item{age}{Individual's age, time-varying by year}
 #'   ...
 #' }
 #' @source <https://www.who.int/teams/global-tuberculosis-programme/data>

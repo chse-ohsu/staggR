@@ -40,7 +40,7 @@ select_period <- function(mdl, period = "post", cohorts = NULL) {
 
   # Exclude referent time periods
   for(cohort_lvl in unique(tsi$cohort)) {
-    tsi$time_ref[tsi$cohort == cohort_lvl] <- mdl$cohort$time_refs[[cohort_lvl]]
+    tsi$time_ref[tsi$cohort == cohort_lvl] <- mdl$cohort$time_refs[[as.character(cohort_lvl)]]
   }
   tsi <- tsi[tsi$time != tsi$time_ref,]
 

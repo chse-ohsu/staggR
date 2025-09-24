@@ -89,6 +89,9 @@ hosp <-
          yr, start_yr, end_yr) %>%
   filter(yr >= start_yr & yr <= end_yr) %>%
 
+  # Increment age each year
+  mutate(age = age + as.integer(yr) - as.integer(start_yr)) %>%
+
   # Convert cohort into dummy variables
   arrange(cohort) %>%
   rename(cohort_wide = cohort) %>%
@@ -247,21 +250,23 @@ hosp %<>%
                                  "Moonwhistle County",
                                  "Pickle Springs County")),
             by = "grp") %>%
-  mutate(policy_yr = lubridate::year(intervention_dt)) %>%
-  rename(hospitalized = y,
-         intervention_yr = policy_yr) %>%
+  # Make age an integer
+  mutate(age = as.integer(age)) %>%
+  rename(hospitalized = y) %>%
   select(guid, county, intervention_dt, intervention_yr, age, sex, comorb,
          cohort, yr, hospitalized) %>%
+  arrange(guid, yr) %>%
   as.data.frame()
 
 # Make an aggregated version of the dataset
 hosp_agg <- hosp %>%
-  summarise(pct_y = mean(y),
+  summarise(pct_hospitalized = mean(hospitalized),
             n_enr = n_distinct(guid),
             mean_age = mean(age),
             pct_fem = mean(sex == "F"),
             pct_cmb = mean(comorb),
-            .by = c("yr", "grp", "cohort", "policy_yr"))
+            .by = c("yr", "county", "cohort", "intervention_yr")) %>%
+  arrange(county, yr)
 
 usethis::use_data(hosp, overwrite = TRUE)
 usethis::use_data(hosp_agg, overwrite = TRUE)

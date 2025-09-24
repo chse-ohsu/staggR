@@ -9,9 +9,9 @@ select_terms(mdl, coefs = NULL, selection = NULL)
 \arguments{
 \item{mdl}{sdid object}
 
-\item{coefs}{optional list of specific terms from `mdl` to be selected}
+\item{coefs}{optional list of specific terms from \code{mdl} to be selected}
 
-\item{selection}{list object containing values for named elements `cohorts`, `times`, and `tsi`. `cohorts` contains a character vector of cohort levels to include in the term selection; `times` contains a character vector of time period levels to include in the term selection; and `tsi` contains a vector of integers representing the number of units of time relative to each cohort's intervention to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected. One of `times` or `tsi` must be specified. If both are specified, `times` is ignored.}
+\item{selection}{list object containing values for named elements \code{cohorts}, \code{times}, and \code{tsi}. \code{cohorts} contains a character vector of cohort levels to include in the term selection; \code{times} contains a character vector of time period levels to include in the term selection; and \code{tsi} contains a vector of integers representing the number of units of time relative to each cohort's intervention to include in the term selection. If \code{cohorts} is omitted, all available cohorts will be selected. One of \code{times} or \code{tsi} must be specified. If both are specified, \code{times} is ignored.}
 }
 \value{
 character vector

@@ -1,5 +1,24 @@
 #' Fit a staggered difference-in-differences model
 #'
+#' @description
+#' `sdid` fits a linear staggered difference-in-differences model, following the Abraham and Sun (2018) approach. It facilitates optional weighting and user-specified variance-covariance function.
+#'
+#' @details
+#' Fitting a staggered difference-in-differences model requires deliberate attention to two specific independent variables:
+#'
+#' * The intervention cohort column assigns a cohort name to all individuals or groups having the the intervention during the same time period. For example, if the longitudinal data is at the year level, ranging from 2010 to 2020, and it contains 15 counties, 3 of whom implemented the intervention of interest in 2015, those 3 counties would be assigned to the same cohort. Similarly, if 2 more counties implemented the intervention in 2016, those 2 counties would be assigned to the next cohort.
+#' * The time period column assigns each observation to a time period at the most granular level of the longitudinal data. In the example described above, these values would correspond to the years 2010, ..., 2020.
+#'
+#' To specify a model, a formula is passed following the format `response ~ cohort_var + time_var + covariates`. This, however, is not the formula use to fit the model; `sdid()` expands this formula to include main effects and every possible interaction between `cohort_var` and `time_var`, excluding referents for identification:
+#'
+#' * Referents for main effects are either the first levels `cohort_var` and `time_var` or the referents specified in `cohort_ref` and `time_ref`.
+#' * Referents for cohort-time interactions are either the factor level of `time_var` that immediately precedes the value of `intervention_var` within each cohort or the referencts specified in `cohort_time_refs`.
+#'
+#' `sdid()` also accommodates aggregated data through the `weights` argument.
+#'
+#' @references
+#' Abraham S, Sun L. Estimating Dynamic Treatment Effects in Event Studies with Heterogeneous Treatment Effects. MIT; 2018.
+#'
 #' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under 'Details'.
 #' @param df data frame containing the variables in the model.
 #' @param weights an optional vector of weights to be passed to `lm()` to be used in the fitting process. Should be NULL or a numeric vector.
@@ -12,7 +31,35 @@
 #' @param .vcov Function to be used to estimate the variance-covariance matrix. Defaults to stats::vcov
 #' @param ... additional arguments to be passed to `.vcov`.
 #'
-#' @return sdid
+#' @return `sdid()` returns an object of class "sdid", which is a list containing the following components:
+#'
+#' mdl
+#' : The `lm` object returned from the call to `lm()` in `sdid()`
+#'
+#' formula
+#' : A list object containing both the original formula specified in the call to `sdid()` and the generated formula, with all cohort-time interactions, passed to `lm()` to fit the model
+#'
+#' vcov
+#' : The variance-covariance matrix used to estimate standard errors
+#'
+#' tsi
+#' : The time-since-intervention dataset used to enumerate time periods relative to the intervention period for each cohort
+#'
+#' obs_cnt
+#' : Counts of observations within each cohort-time interaction
+#' cohort
+#' : A list object containing details about cohorts. `var` contains the name of the column in `df` that identifies cohorts; `ref` contains the value of the cohort column that functions as the referent for main effects; and `time_refs` contains the referent time values within each cohort for each set of cohort-time interactions.
+#'
+#' time
+#' : A list object containing `var`, which is the name of the column in `df` identified by the `sdid()` argument `time_var`, and `ref`, the referent value of `time_var` for main effects.
+#'
+#' intervention_var
+#' : Name of the column in `df` that contains the time period during which each cohort implemented the intervention of interest
+#'
+#' covariates
+#' : A character vector containing the terms in `formula` other than those corresponding to cohorts and time periods
+#'
+
 #' @export sdid
 
 sdid <- function(formula,
@@ -38,13 +85,13 @@ sdid <- function(formula,
   ## If time_var is not specified, pull it from the second RHS term in the formula
   if(is.null(time_var)) time_var <- attr(trm, "term.labels")[[2]]
 
-  ## If covariates is not specified, pull it from the remaining RHS terms in the formula
-  if(is.null(covariates)) covariates <-
+  ## Pull covariates from the remaining RHS terms in the formula
+  covariates <-
     attr(trm, "term.labels")[!(attr(trm, "term.labels") %in% c(cohort_var, time_var))]
 
   # Validate cohort_var, time_var, intervention_var, and covariates
   if(!all(c(cohort_var, time_var, intervention_var, covariates) %in% names(df))) {
-    stop("cohort_var, time_var, intervention_var, and all elements of covariates must match column names in df.")
+    stop("cohort_var, time_var, intervention_var, and all covariates must match column names in df.")
   }
   # Make sure intervention_var is consistent within each cohort
   if(nrow(unique(df[, c(cohort_var, intervention_var)])) != length(unique(df[[cohort_var]]))) {

@@ -9,7 +9,7 @@ select_period(mdl, period = "post", cohorts = NULL)
 \arguments{
 \item{mdl}{sdid object}
 
-\item{cohorts}{character vector containing cohort levels to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected.}
+\item{cohorts}{character vector containing cohort levels to include in the term selection. If \code{cohorts} is omitted, all available cohorts will be selected.}
 }
 \value{
 character vector

@@ -11,15 +11,15 @@ ave_coeff(sdid, coefs)
 
 \item{df}{data frame containing the variables in the model}
 
-\item{vcv}{variance-covariance corresponding to `mdl`}
+\item{vcv}{variance-covariance corresponding to \code{mdl}}
 
-\item{select_vars}{list of variables selected for averaging; if NULL, then [SOMETHING] must be specified}
+\item{select_vars}{list of variables selected for averaging; if NULL, then \link{SOMETHING} must be specified}
 
-\item{cohort_name}{character string for how cohorts are named. Must be specified if `select_vars` is NULL.}
+\item{cohort_name}{character string for how cohorts are named. Must be specified if \code{select_vars} is NULL.}
 
-\item{cohort_numbers}{list of cohort numbers selected for averaging. Must be specified if `select_vars` is NULL.}
+\item{cohort_numbers}{list of cohort numbers selected for averaging. Must be specified if \code{select_vars} is NULL.}
 
-\item{tsi_numbers}{list of time-since-intervention periods selected for averaging. Must be specified if `select_vars` is NULL.}
+\item{tsi_numbers}{list of time-since-intervention periods selected for averaging. Must be specified if \code{select_vars} is NULL.}
 
 \item{pop_var}{name of variable showing population numbers (aggregate data only); if NULL, use nrow (i.e., number of rows = number of observations)}
 }

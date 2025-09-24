@@ -9,13 +9,13 @@ prep_data(df, cohort_var, cohort_ref = NULL, time_var, time_ref = NULL)
 \arguments{
 \item{df}{data frame containing the variables in the model.}
 
-\item{cohort_var}{string specifying the name of the column in `df` that defines the intervention cohorts.}
+\item{cohort_var}{string specifying the name of the column in \code{df} that defines the intervention cohorts.}
 
-\item{cohort_ref}{an optional string specifying the value of `cohort_var` to be used as the referent in the model. If not specified, the value is taken from the first observed value in `cohort_var`.}
+\item{cohort_ref}{an optional string specifying the value of \code{cohort_var} to be used as the referent in the model. If not specified, the value is taken from the first observed value in \code{cohort_var}.}
 
-\item{time_var}{string specifying the name of the column in `df` that defines time periods over the study.}
+\item{time_var}{string specifying the name of the column in \code{df} that defines time periods over the study.}
 
-\item{time_ref}{an optional string specifying the value of `time_var` to be used as the referent in the model.}
+\item{time_ref}{an optional string specifying the value of \code{time_var} to be used as the referent in the model.}
 }
 \value{
 data.frame
