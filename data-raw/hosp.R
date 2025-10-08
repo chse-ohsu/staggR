@@ -92,6 +92,16 @@ hosp <-
   # Increment age each year
   mutate(age = age + as.integer(yr) - as.integer(start_yr)) %>%
 
+  # Make comorb time-varying by year
+  arrange(guid, yr) %>%
+  # This bit makes subsequent comorbidity more likely if cormorbidity has been
+  # previously observed.
+  mutate(prev_comorb = case_when(is.na(lag(comorb)) ~ comorb,
+                                 TRUE ~ as.integer(lag(comorb))),
+         .by = "guid") %>%
+  mutate(comorb = rbinom(.N, 1, plogis(prev_comorb))) %>%
+  select(-prev_comorb) %>%
+
   # Convert cohort into dummy variables
   arrange(cohort) %>%
   rename(cohort_wide = cohort) %>%
@@ -228,7 +238,7 @@ hosp %<>%
            fx$gamma40*cohort_8*yr_2020 +
            fx$delta1*age + fx$delta2*sex_int + fx$delta3*comorb,
          prob = plogis(logit_p),  # Convert logit to probability
-         y = rbinom(.N, 1, prob)) # Simulate outcome
+         y = as.logical(rbinom(.N, 1, prob))) # Simulate outcome
 
 
 # Restrict to necessary columns, identify intervention year, and make some columns more intuitive
@@ -250,8 +260,10 @@ hosp %<>%
                                  "Moonwhistle County",
                                  "Pickle Springs County")),
             by = "grp") %>%
-  # Make age an integer
-  mutate(age = as.integer(age)) %>%
+  # Make age an integer and yr columns characters
+  mutate(age = as.integer(age),
+         intervention_yr = as.character(intervention_yr),
+         yr = as.character(yr)) %>%
   rename(hospitalized = y) %>%
   select(guid, county, intervention_dt, intervention_yr, age, sex, comorb,
          cohort, yr, hospitalized) %>%

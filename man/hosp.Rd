@@ -3,27 +3,34 @@
 \docType{data}
 \name{hosp}
 \alias{hosp}
-\title{World Health Organization TB data}
+\title{Hospitalization data}
 \format{
 \subsection{\code{hosp}}{
 
-A data frame with 7,240 rows and 60 columns:
+A data frame with 31,040 rows and 10 columns:
 \describe{
-\item{country}{Country name}
-\item{iso2, iso3}{2 & 3 letter ISO country codes}
-\item{year}{Year}
-...
+\item{guid}{Character vector containing globally unique identifiers for individuals living in the 15 counties}
+\item{county}{Character vector containing county names}
+\item{intervention_dt}{Dates on which each county implemented their policy intervention to reduce hospitalizations}
+\item{intervention_yr}{Character vector containing the year during which \code{intervention_dt} takes place}
+\item{age}{Integer containing individuals' ages. Time-varying by year.}
+\item{sex}{Character vector containing individuals' sexes. Not time-varying.}
+\item{comorb}{Logical indicating whether each individual has comorbidities. Time-varying by year.}
+\item{cohort}{Character vector identifying the intervention cohort to which each individual belongs. Takes values 0, 5, 6, 7, or 8, corresponding to counties that implemented the intervention not at all or during 2015, 2016, 2017, or 2018, respectively. Invariant within counties.}
+\item{yr}{Character vector representing the observation year for each row.}
+\item{hospitalized}{Integer indicating whether the individual was hospitalized during the current year.}
 }
 }
-}
-\source{
-\url{https://www.who.int/teams/global-tuberculosis-programme/data}
 }
 \usage{
 hosp
 }
 \description{
-A subset of data from the World Health Organization Global Tuberculosis
-Report ...
+A simulated data set of 15 counties, 11 of which implemented a policy intervention during 2015 - 2018 to reduce hospitalizations. The data set is longitudinal, with each row corresponding to an individual-year.
+}
+\details{
+Consider a policy intervention designed to reduce inpatient hospitalizations in 15 counties. This longitudinal data set has one row per individual-year. Each individual is identified by a globally unique identifier (\code{guid}), and we have measures of the individuals' ages, sexes, and comorbidities, and a column indicating whether the individual was hospitalized during the current year.
+
+The column \code{intervention_yr} tells us the year during which each county implemented the intervention. If \code{intervention_yr} is \code{NA}, we can conclude that the county never implemented the intervention. Among the 15 counties, 3 implemented the intervention in 2015; 2 counties implemented in 2016; 5 counties implemented in 2017; 1 county implemented in 2018; and 4 counties did not implement the intervention at all during the study period, which runs for 11 years, from 2010 through 2020.
 }
 \keyword{datasets}

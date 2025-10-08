@@ -157,56 +157,38 @@ sdid <- function(formula,
   # Fit model
   ## Unweighted
   if(is.null(weights)) {
-  mdl <- lm(formula = fml,
-            data = df_prepped)
+    mdl <- lm(formula = fml,
+              data = df_prepped)
   } else {
+    ## Weighted
     if(!(weights %in% colnames(df_prepped))) {
       stop("Supplied `weights` column `",
            weights,
            "` does not exist in ",
            deparse(substitute(df)), ".")
-    } else{
-    mdl <- lm(formula = fml,
-              data = df_prepped,
-              weights = df_prepped[[weights]])
+    } else {
+      mdl <- lm(formula = fml,
+                data = df_prepped,
+                weights = df_prepped[[weights]])
     }
   }
-  ## Weighted
   # vcv <- .vcov(mdl)
   vcv <- .vcov(mdl, ...)
 
   # Identify time since intervention
   # Create a dataset that contains all the unique values of cohort_var,
   # time_var, and tsi_var.
-  tsi <- unique(df[order(df[[cohort_var]], df[[time_var]]),
-                   c(cohort_var, time_var, intervention_var)])
-
-  # Change column names so we don't have to keep referencing them dynamically
-  colnames(tsi) <- c("cohort", "time", "intervention_time")
-
-  # Number the rows within each cohort
-  tsi$rn <- ave(
-    seq_len(nrow(tsi)), # the sequence to number
-    tsi$cohort,         # grouping variable
-    FUN = seq_along     # restart sequence for each group
-  )
-
-  # Identify the value of time_var that matches the value of tsi_var for
-  # each cohort
-  tsi$tsi <-
-    with(tsi,
-         rn[match(paste0(cohort, "_", intervention_time),
-                  paste0(cohort, "_", time))])
-
-  # To calculate time since intervention, subtract tsi from rn and add 1
-  tsi$tsi <- tsi$rn - tsi$tsi
+  tsi <- id_tsi(df = df,
+             cohort_var = cohort_var,
+             time_var = time_var,
+             intervention_var = intervention_var)
 
   # Create return object
   rslts <- new_sdid(mdl = mdl,
                     formula = list(supplied = formula,
-                               generated = fml),
+                                   fitted = fml),
                     vcov = vcv,
-                    tsi = tsi,
+                    tsi = tsi[["data"]],
                     obs_cnt = obs_cnt,
                     cohort = list(var = cohort_var,
                                   ref = cohort_ref,

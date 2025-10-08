@@ -24,16 +24,29 @@ The `staggR` package makes it easy to fit linear difference-in-differences model
 Consider as a didactic example a policy intervention designed to reduce inpatient hospitalizations in 15 counties. This longitudinal data set has one row per individual-year. Each individual in the data set is identified by a globally unique identifier (`guid`), and we have measures of the individuals' ages, sexes, and comorbidities, and an indicator showing whether the individual was hospitalized during the current year. 
 
 ```{r setup}
+# devtools::install()
 library(staggR)
 head(hosp, 20)
 ```
 
-In this data set, the column `intervention_yr` tells us the year during which each county implemented the intervention. If `intervention_yr` is `NA`, we can conclude that the county never implented the intervention. We observe that, among the 15 counties in the data set, 3 counties implemented the intervention in 2015; 2 counties implemented in 2016; 5 counties implemented in 2017; 1 county implemented in 2018; and 4 counties did not implement the intervention at all during the study period, which runs for 11 years, from 2010 through 2020. 
+In this data set, the column `intervention_yr` tells us the year during which each county implemented the intervention. If `intervention_yr` is `NA`, we can conclude that the county never implemented the intervention. We observe that, among the 15 counties in the data set, 3 counties implemented the intervention in 2015; 2 counties implemented in 2016; 5 counties implemented in 2017; 1 county implemented in 2018; and 4 counties did not implement the intervention at all during the study period.
 
 ```{r}
 with(hosp,
      table(county, intervention_yr, useNA = "ifany"))
+```
 
+Counties are organized into cohorts by intervention year. All counties having the same intervention year are assigned to the same cohort.
+
+```{r}
+county_cohorts <- unique(hosp[, c("county", "cohort", "intervention_yr")])
+county_cohorts[order(county_cohorts$cohort), ]
+```
+
+
+The study period runs for 11 years, from 2010 through 2020. 
+
+```{r}
 with(hosp,
      table(county, yr))
 ```
@@ -45,26 +58,69 @@ stats::xtabs(hospitalized ~ county + yr,
              data = hosp)
 ```
 
-Visualize hospitalizations relative to intervention.
+Let's visualize the proportion of individuals who were hospitalized over time, relative to the intervention year by county.
 
 ```{r tsplot, fig.width = 10, fig.height = 6, out.width = "100%"}
-# Calculate time, in years, relative to the intervention year
-hosp$tsi <- as.integer(hosp$yr) - as.integer(hosp$intervention_yr)
-
-# Aggregate to county-year
-agg <- aggregate(hospitalized ~ county + tsi,
-                 data = hosp,
-                 FUN = mean)
-## TODO: This plot omits non-intervention counties. Can I add them? 
-library(ggplot2)
-ggplot(data = agg,
-       aes(x = tsi, y = hospitalized)) +
-  facet_wrap(~ county, ncol = 3) +
-  geom_line(stat = "identity", linewidth = 1.0, alpha = 0.8) +
-  geom_vline(xintercept = 0, colour = "grey") +
-  scale_x_continuous(name = "Years since intervention",
-                     breaks = seq(-8, 5, by = 2)) +
-  scale_y_continuous(name = "Percent hospitalized") +
-  theme_minimal()
+ts_plot(hospitalized ~ county + yr,
+        df = hosp,
+        intervention_var = "intervention_yr")
 ```
+
+This is helpful, but all of the counties that didn't implement the intervention have been omitted from the plot. This is because `ts_plot()` omits any counties where any of the elements in the formula above (`hospitalized ~ county + yr`) or the `intervention_var` are `NA`. 
+
+```{r}
+table(hosp$hospitalized, useNA = "always")
+table(hosp$county, useNA = "always")
+table(hosp$yr, useNA = "always")
+table(hosp$intervention_yr, useNA = "always")
+```
+
+Of course, `intervention_yr` is the culprit. We already established that this column will be `NA` for any counties that never implemented the intervention during our study period. We can add these counties back to the plot if we change these `NA`s to some other string to indicate that they did not intervene.
+
+```{r tsplot2, fig.width = 10, fig.height = 6, out.width = "100%"}
+hosp2 <- hosp
+hosp2$intervention_yr <- ifelse(is.na(hosp2$intervention_yr),
+                                yes = "Comparison group",
+                                no = hosp2$intervention_yr)
+county_plot <- ts_plot(hospitalized ~ county + yr,
+        df = hosp2,
+        intervention_var = "intervention_yr")
+county_plot
+```
+
+We might like to clean up this plot a little bit, customize colors, and use better labels for the X and Y axes. Fortunately, `ts_plot()` returns a `ggplot` object, so we can append any `ggplot2` functions to customize the plot.
+
+```{r tsplot3, fig.width = 10, fig.height = 6, out.width = "100%"}
+library(ggplot2)
+county_plot +
+  scale_x_discrete(name = "Years", 
+                   breaks = as.character(seq(2010, 2020, by = 2))) +
+  scale_y_continuous(name = "Percent hospitalized",
+                     breaks = seq(0, 1, by = 0.2),
+                     labels = scales::percent_format()) +
+  theme_classic()
+```
+
+Now that we have some familiarity with the data, we might like to fit a staggered difference-in-differences model. We will pass a formula to the `sdid()` function. Here, the order of terms in the formula is important. The dependent variable is on the left-hand side of the formula, as usual. `sdid()` will assume that the first term on the right-hand side of the formula is the variable that tells us which cohort each observation belongs to; and it will assume that the second term on the right-hand side of the formula is the variable that tells us which time period each observation comes from. All remaining terms on the right-hand side of the formula are covariates that we would like to use to adjust our model. 
+
+Importantly, we also tell `sdid()` the name of the column that contains the time period during which each cohort implemented the intervention. In our case, that column is called `intervention_yr`. 
+
+```{r}
+sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                  df = hosp,
+                  intervention_var  = "intervention_yr")
+```
+
+Although we supplied a formula to fit this model, it's important to recognize that this formula is specified according to a convenience syntax, which assumes that we want to fit a staggered difference-in-differences model, rather than the very simple model implied by our formula. If we would like to see the formula passed to `lm()` to fit the staggered difference-in-differences model, we can examine the components of the `sdid_hosp` object.
+
+```{r}
+names(sdid_hosp)
+sdid_hosp$formula
+```
+
+Here we see both the `supplied` and `fitted` formulas. The `fitted` formula has created main effects for each cohort and time period, and it has created interaction terms for each cohort-time period combination. You might notice that these terms do not exist in our supplied data.frame; this is because `sdid()` calls `prep_data()` to create all necessary dummy variables. These are needed because we have to be very explicit about which levels of each cohort and time period variable are used as referents in the model, and these referent levels differ for main effects and for each set of interaction terms. 
+
+By default, `sdid()` assumes that the first observed levels of both the cohort column and the time-period column should function as the referents for the main effects. This is the same as with `lm()` and most other modeling functions in R. For the long list of cohort-time period interactions, however, `sdid()` assumes that the time period immediately preceding the intervention time period (defined by `intervention_var`) should be the referent. In this case, that means that the interaction terms for `cohort_5` should omit 2014 as the referent time period, because that cohort's intervention took place in 2015. Similarly, the interaction terms for `cohort_6` should omit 2015 as the referent time period, because that cohort's intervention took place in 2016. Indeed, we observe that the formula has interaction terms `cohort_5:yr_2010` through `cohort_5:yr_2020`, with `cohort_5_2014` omitted for identification. 
+
+
 

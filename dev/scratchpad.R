@@ -69,7 +69,7 @@ ave_coeff(sdid = fooagg,
 formula <- "y ~ cohort + yr + age + sex + comorb"
 df = hosp
 weights = NULL
-intervention_var = "policy_yr"
+intervention_var = "intervention_yr"
 cohort_var = NULL; cohort_ref = NULL; cohort_time_refs = NULL;
 time_var = NULL; time_ref = NULL;
 .vcov = stats::vcov
@@ -110,3 +110,49 @@ ave_coeff(sdid = qtpos,
 ave_coeff(sdid = qtpos,
           coefs = select_period(mdl = qtpos,
                                 period = "post"))
+
+
+
+#' ****************************************************************************************************
+#' # Plotting function
+library(ggplot2)
+
+df <- hosp
+y <- "hospitalized"
+group <- "county"
+time_var <- "yr"
+intervention_var <- "intervention_yr"
+ncol <- 3
+
+# Calculate time, in years, relative to the intervention year
+tsi_df <- tsi(df = hosp, cohort_var = cohort_var, time_var = time_var, intervention_var = intervention_var)
+# df$tsi[is.na(df$tsi)] <- 0 ## <- Might need this
+
+
+# Replace missing intervention years for comparison counties
+# hosp$intervention_yr[is.na(hosp$intervention_yr)] <- ""
+
+# Plot time series for all counties
+df[[intervention_var]] <- ifelse(is.na(df[[intervention_var]]),
+                                 yes = "", no = df[[intervention_var]])
+
+
+agg <- aggregate(as.formula(paste0(y, " ~ ", group, " + ", time_var, " + ", intervention_var)),
+          data = df,
+          FUN = mean)
+
+agg[[time_var]] <- as.character(agg[[time_var]])
+agg[[intervention_var]] <- as.character(agg[[intervention_var]])
+
+ggplot(data = agg,
+       aes(x = .data[[time_var]], y = .data[[y]], group = .data[[group]])) +
+  facet_wrap(~ .data[[group]], ncol = ncol) +
+  geom_point(stat = "identity", size = 1) +
+  geom_line(stat = "identity", linewidth = 1.0, alpha = 0.8) +
+  geom_vline(aes(xintercept = .data[[intervention_var]]),
+             color = "blue") +
+  theme_light()
+
+
+
+ggplot()
