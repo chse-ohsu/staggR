@@ -83,14 +83,35 @@ hosp2$intervention_yr <- ifelse(is.na(hosp2$intervention_yr),
                                 yes = "Comparison group",
                                 no = hosp2$intervention_yr)
 county_plot <- ts_plot(hospitalized ~ county + yr,
-        df = hosp2,
-        intervention_var = "intervention_yr")
+                       df = hosp2,
+                       intervention_var = "intervention_yr")
 county_plot
 ```
 
-We might like to clean up this plot a little bit, customize colors, and use better labels for the X and Y axes. Fortunately, `ts_plot()` returns a `ggplot` object, so we can append any `ggplot2` functions to customize the plot.
+It might be easier to compare the panels in this plot if the X axes were all aligned at the point of intervention. We can accomplish this by passing a time-since-intervention (`tsi`) object to `ts_plot()`. We create a `tsi` object by passing the `hosp2` data set to the `id_tsi()` function, and we identify the names of the columns that contain intervention cohorts, time periods, and the time period during which each cohort implemented the intervention. The returned `tsi` object contains a data frame, which includes columns `cohort`, `time`, `intervention_time`, and `tsi`. Each row corresponds to a unique county-time period. The `tsi` column contains an integer that tells us how many time periods the corresponding time period is away from the intervention. For example, Ashbrook County belongs to cohort 5, which means the intervention took place in 2015. If we examine the first row of the `tsi` object, we'll see that the time period 2010 is 5 time periods prior to the intervention, so `tsi` has a value of -5. Values of `tsi` are negative and arraive at 0 during the year of intervention, and then they are positive in the years following the intervention. 
+
+```{r}
+hosp_tsi <- id_tsi(df = hosp2,
+                        cohort_var = "county",
+                        time_var = "yr",
+                        intervention_var = "intervention_yr")
+head(hosp_tsi$data, 11)
+```
+
+Now we can pass `hosp_tsi` to `ts_plot()` to generate a set of plots with time since intervention on the X axis instead of years. 
 
 ```{r tsplot3, fig.width = 10, fig.height = 6, out.width = "100%"}
+county_plot <- ts_plot(hospitalized ~ county + yr,
+        df = hosp2,
+        intervention_var = "intervention_yr", 
+        tsi = hosp_tsi)
+county_plot
+```
+
+
+We might like to customize this plot a little bit and use better labels for the X and Y axes. Fortunately, `ts_plot()` returns a `ggplot` object, so we can append any `ggplot2` functions to customize the plot.
+
+```{r tsplot4, fig.width = 10, fig.height = 6, out.width = "100%"}
 library(ggplot2)
 county_plot +
   scale_x_discrete(name = "Years", 
@@ -101,7 +122,7 @@ county_plot +
   theme_classic()
 ```
 
-Now that we have some familiarity with the data, we might like to fit a staggered difference-in-differences model. We will pass a formula to the `sdid()` function. Here, the order of terms in the formula is important. The dependent variable is on the left-hand side of the formula, as usual. `sdid()` will assume that the first term on the right-hand side of the formula is the variable that tells us which cohort each observation belongs to; and it will assume that the second term on the right-hand side of the formula is the variable that tells us which time period each observation comes from. All remaining terms on the right-hand side of the formula are covariates that we would like to use to adjust our model. 
+Now that we have some familiarity with the data, we can fit a staggered difference-in-differences model. The order of terms in the regression formula is important: `sdid()` will assume that the first term on the right-hand side of the formula is the variable that tells us which cohort each observation belongs to, and it will assume that the second term is the variable that tells us which time period each observation comes from. All remaining terms on the right-hand side of the formula are covariates that we would like to use to adjust our model. The dependent variable is on the left-hand side of the formula, as usual.
 
 Importantly, we also tell `sdid()` the name of the column that contains the time period during which each cohort implemented the intervention. In our case, that column is called `intervention_yr`. 
 
@@ -111,7 +132,7 @@ sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
                   intervention_var  = "intervention_yr")
 ```
 
-Although we supplied a formula to fit this model, it's important to recognize that this formula is specified according to a convenience syntax, which assumes that we want to fit a staggered difference-in-differences model, rather than the very simple model implied by our formula. If we would like to see the formula passed to `lm()` to fit the staggered difference-in-differences model, we can examine the components of the `sdid_hosp` object.
+Although we supplied a formula to fit this model, it's important to recognize that this formula is specified according to a convenience syntax, which assumes that we want to fit a staggered difference-in-differences model in the form of ([INSERT MODEL SPECIFICATION HERE]), rather than the very simple model implied by our formula. If we would like to see the formula passed to `lm()` to fit the staggered difference-in-differences model, we can examine the components of the `sdid_hosp` object.
 
 ```{r}
 names(sdid_hosp)

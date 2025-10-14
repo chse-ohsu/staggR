@@ -41,5 +41,8 @@ id_tsi <- function(df,
   # To calculate time since intervention, subtract tsi from rn
   tsi$tsi <- tsi$rn - tsi$tsi
 
+  # Remove the `rn` column
+  tsi$rn <- NULL
+
   return(new_tsi(tsi))
 }
