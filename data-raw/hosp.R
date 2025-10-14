@@ -265,8 +265,9 @@ hosp %<>%
          intervention_yr = as.character(intervention_yr),
          yr = as.character(yr)) %>%
   rename(hospitalized = y) %>%
-  select(guid, county, intervention_dt, intervention_yr, age, sex, comorb,
-         cohort, yr, hospitalized) %>%
+  select(guid, age, sex, comorb, hospitalized,
+         county, intervention_yr, cohort,
+         yr) %>%
   arrange(guid, yr) %>%
   as.data.frame()
 
