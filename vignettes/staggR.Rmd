@@ -17,9 +17,89 @@ knitr::opts_chunk$set(
 staggR: fit difference-in-differences models with staggered interventions
 =====================
 
-The `staggR` package makes it easy to fit linear difference-in-differences models in cases where intervention roll-outs are staggered over time. 
+The `staggR` package fits linear difference-in-differences models in scenarios where intervention roll-outs are
+staggered over time.  The package implements a version of approach proposed by @sun_2021_estimating-dynamic estimates
+cohort- and time-since-treatment specific difference-in-differences parameters. This package provides an alternative
+approach that proceeds in two steps:
 
-## Explore the didactic data
+1. Estimate a difference-in-differences regression with cohort- and (calendar) time-specific parameters;
+
+2. Translate difference-in-differences estimates into average estimates for arbitrary time periods relative to the
+   intervention (e.g., post-intervention period).
+   
+By separating these two steps, we provide an easy to implement, transparent and intuitive difference-in-differences
+framework.
+
+
+# Background
+
+Consider a scenario with $i=1,...,N$ units and $t=1,...,T$ periods. Units are exposed to the intervention at different
+times. We denote by $c=1,...,C$ the cohorts.  To simplify the notation, we assume that units in cohort $c=1$ are exposed
+to treatment at time $t$, etc.  Units exposed to the intervention at time $t>T$ form the comparison group becuase they
+are not exposed to the intervention during the study erpido. 
+
+Abraham and Sun's difference-in-differences specification interacts cohort indicators with time indicators relative to
+intervention exposure start, and might be written as follows:
+
+```
+$$
+y_{it} = \alpha_c D_c + \beta_t D_t + \left(\sum_c \sum_{l\neq -1} \gamma_{cl} D_c \cdot D^l_{it}\right) + \psi X_{it} + \varepsilon_{st},
+$$
+```
+
+where $D_c$ are cohort indicators equal to one if unit $i$ is in cohort $c$ and zero otherwise, $D_t$ are time
+indicators, and $D^l_{it}$ are indicators equal to one if unit $i$ is $l$ periods away from initial intervention
+exposure, $X_{it}$ are covariates and $\varepsilon_{st}$ is the error term. The last last pre-intervention period $l=-1$
+is omitted to ensure identification.  The parameters $\gamma_{cl}$ measure difference-in-differences estimates for a
+cohort $c$ and time since intervention $l$.
+
+Our approach recognizes the following relationship between time since intervention $l$ and time $t$, which was also
+noted by Sun and Abraham:
+
+```
+$$
+l = t-c 
+$$
+```
+
+For instance, time $t=2$ for cohort $c=3$ is $l=-1$, i.e., the last period prior to initial intervention exposure,
+because initial intervention exposure for cohort $c$ is $t=3$.
+
+Using this insight, the difference-in-differences regression can alternatively be stated as follows:
+
+```
+$$
+y_{it} = \alpha_c D_c + \beta_t D_t + \left(\sum_c \sum_{t\neq (c-1)} \gamma_{ct} D_c \cdot D_t\right) + \psi X_{it} + \varepsilon_{st}.
+$$
+```
+
+Using this specification has two advantages:
+
+1. It clarifies that difference-in-differences is a generalization of the basic difference-in-differences design with
+   two periods (a pre-intervention and a post-intervention period) and two cohorts (a treatment group and a comparison
+   group).  In that setting, the indicator for the post-intervention period measures the change between the pre- and
+   post-intervention period for the comparison group, and the difference-in-differences estimate measures the
+   differential change between the pre- and post-intervention period for the treatment group.  
+   
+   The above equation preserves this structure, while showing how it is a more general version of the
+   difference-in-differences design. Specifically, parameters $\beta_t$ measure changes over time for the comparison
+   group, which now can include multiple periods; and parameters $\gamma_{ct}$ measure differential changes, but for
+   multiple treatment cohorts instead of just one treatment group, and for multiple periods instead of just one.
+   
+2. It can be easily implemented in R (or other statisticaly programs) because it does not require constructing
+   cohort-specific time since intervention indicators $D^l_{it}$. Instead, it uses cohort and time indicators and the
+   interaction between the two. 
+   
+   
+This packages provides functions to estimate such a difference-in-differences specification. It further provides
+functions to translate difference-in-differences estimates into quantities that are useful for research purposes. For
+instance, one can calculate average difference-in-differences estimates for each period relative to intervention
+exposure, or one can calculate the average difference-in-differences estimates for the full post-intervention period.
+
+
+# Example using simulated data
+
+## Explore data
 
 Consider as a didactic example a policy intervention designed to reduce inpatient hospitalizations in 15 counties. This longitudinal data set has one row per individual-year. Each individual in the data set is identified by a globally unique identifier (`guid`), and we have measures of the individuals' ages, sexes, and comorbidities, and an indicator showing whether the individual was hospitalized during the current year. 
 
