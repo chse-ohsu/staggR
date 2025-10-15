@@ -217,7 +217,7 @@ Here we see both the `supplied` and `fitted` formulas. The `fitted` formula incl
 
 By default, `sdid()` assumes that the first observed levels of both the cohort column and the time-period column should function as the referents for the main effects. This is the same as with `lm()` and most other modeling functions in R. For the long list of cohort-time period interactions, however, `sdid()` assumes that the time period immediately preceding the intervention time period (defined by `intervention_var`) should be the referent. In this case, that means that the interaction terms for `cohort_5` should omit 2014 as the referent time period, because that cohort's intervention took place in 2015. Similarly, the interaction terms for `cohort_6` should omit 2015 as the referent time period, because that cohort's intervention took place in 2016. Indeed, we observe that the formula has interaction terms `cohort_5:yr_2010` through `cohort_5:yr_2020`, with `cohort_5_2014` omitted for identification. 
 
-If, for some reason, we wanted a different time period to function as the referent, we could specify that using the `cohort_time_refs` argument.
+If, for some reason, we wanted a different time period to function as the referent for cohort-time interactions, we could specify that using the `cohort_time_refs` argument.
 
 ```{r}
 sdid_hosp_earlier_timeref <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
@@ -227,24 +227,132 @@ sdid_hosp_earlier_timeref <- sdid(hospitalized ~ cohort + yr + age + sex + comor
                                           `7` = "2015",
                                           `8` = "2016"),
                   intervention_var  = "intervention_yr")
-summary(sdid_hosp_earlier_timeref)
-```
-
-If we want standard errors clustered at the county level, we might specify that we want to use the clustered covariance matrix estimation function from the `sandwich` package. 
-
-```{r}
-sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
-                  df = hosp,
-                  intervention_var  = "intervention_yr",
-                  .vcov = sandwich::vcovCL,
-                  cluster = hosp$county)
-summary(sdid_hosp)
 ```
 
 This works, but our research question is really about how the intervention affected hospitalizations overall during the post-intervention period, across all cohorts. To answer that question, we will need to aggregate some of the coefficients from the model summary.
 
 ## Calculating coefficient averages
 
-The `ave_coeff()` function makes it easy to calculate averages of any specified set of regression coefficients, while also returning aggregated standard errors. 
+The `ave_coeff()` function makes it easy to calculate averages of any specified set of regression coefficients, while also returning aggregated standard errors. Here we calculate the average effect of the intervention during the post-internvention period.
 
+```{r}
+# Identify the coefficients that compose the effect of the intervention during the post-intervention period
+(post_coefs <- select_period(sdid = sdid_hosp, 
+                             period = "post"))
+
+ave_coeff(sdid = sdid_hosp,
+          coefs = post_coefs)
+```
+
+Here we see that the intervention increases probability of hospitalization by 10%. If we wanted to see how risk of hospitalization differs by treatment group during the pre-intervention period, we could pass "pre" to the `period` argument. 
+
+```{r}
+# Identify the coefficients that compose the effect of the intervention during the post-intervention period
+(pre_coefs <- select_period(sdid = sdid_hosp, 
+                             period = "pre"))
+
+ave_coeff(sdid = sdid_hosp,
+          coefs = pre_coefs)
+```
+
+Here we see risk of hospitalization during the pre-intervention period does not significantly differ by intervention status. 
+
+Sometimes there is heterogeneity in the treatment effect between early-adopters compared to late-adopters. To evaluate whether this is the case, we might want to calculate the effect of the intervention on specific cohorts--maybe the earliest two cohorts (5 and 6) and the latest two cohorts (7 and 8). 
+
+```{r}
+# Identify the coefficients that compose the effect of the intervention during the post-intervention period
+(post_coefs_cohort5 <- select_period(sdid = sdid_hosp, 
+                                     period = "post",
+                                     cohorts = c("5", "6")))
+(post_coefs_cohort8 <- select_period(sdid = sdid_hosp, 
+                                     period = "post",
+                                     cohorts = c("7", "8")))
+
+ave_coeff(sdid = sdid_hosp,
+          coefs = post_coefs_cohort5)
+ave_coeff(sdid = sdid_hosp,
+          coefs = post_coefs_cohort8)
+```
+
+Indeed, it looks like the effect size in the last two cohorts is almost double that of the first two cohorts. 
+
+Aside from aggregating the entire pre- or post-intervention periods for specific cohorts, we might want to aggregate a different set of coefficients. For example, we could calculate the risk of hospitalization across all cohorts in the year 2018. 
+
+```{r}
+(terms_2018 <- select_terms(mdl = sdid_hosp,
+                           selection = list(times = "2018")))
+
+ave_coeff(sdid = sdid_hosp,
+          coefs = terms_2018)
+```
+
+Or maybe we want the risk of hospitalization in the year 2018, but only for the first two cohorts (5 and 6). 
+
+```{r}
+(terms_2018_cohorts56 <- select_terms(mdl = sdid_hosp,
+                                     selection = list(cohorts = c("5", "6"),
+                                                      times = "2018")))
+
+ave_coeff(sdid = sdid_hosp,
+          coefs = terms_2018_cohorts56)
+```
+
+Alternatively, if we already know exactly which coefficients we want to aggregate, we can simply list them in the `coefs` argument. 
+
+```{r}
+(terms_custom <- select_terms(mdl = sdid_hosp,
+                                     coefs = c("cohort_5:yr_2018", "cohort_6:yr_2018")))
+
+ave_coeff(sdid = sdid_hosp,
+          coefs = terms_custom)
+```
+
+### Using aggregated data 
+
+Data sets containing staggered interventions can sometimes be very large, so it might be preferable to fit the model using aggregated data. In the case of the hospitalization data, we have an alternate version of the data set that has been aggregated to the county-year level.
+
+```{r}
+hosp_agg
+# This data set contains one row per county-year
+nrow(hosp_agg); nrow(unique(hosp_agg[,c("yr", "county")]))
+```
+
+This is a straightforward change: We will need to change the dependent variable to represent the percent of hospitalized individuals in each county-year (`pct_hospitalized`), and covariates `age`, `sex`, and `comorb` will change to their aggregated counterparts `mean_age`, `pct_fem`, and `pct_cmb`. Finally, we'll use the `weights` argument to specify that the number of observations contained within each row of the data set is contained in the `n_enr` column. 
+
+```{r}
+sdid_hosp_agg <- sdid(pct_hospitalized ~ cohort + yr + mean_age + pct_fem + pct_cmb,
+                  df = hosp_agg,
+                  weights = "n_enr",
+                  intervention_var  = "intervention_yr")
+```
+
+Aggregating means we've somewhat decoupled values of these covariates from outcomes within county-years, so coefficients change a little bit, but the estimates are substantially similar. 
+
+```{r}
+# Summarize the original model
+summary_sdid_hosp <- 
+  broom::tidy(sdid_hosp$mdl)[, c("term", "estimate", "std.error")]
+
+# Summarize the model fitted using aggregated data
+summary_sdid_hosp_agg <- 
+  broom::tidy(sdid_hosp_agg$mdl)[, c("estimate", "std.error")]
+
+# Combine the two summaries side by side
+colnames(summary_sdid_hosp_agg) <- c("agg_estimate", "agg_se")
+cbind(summary_sdid_hosp, summary_sdid_hosp_agg)
+```
+
+### Calculating custom standard errors
+
+If we want standard errors clustered at the county level, we might specify that we want to use the clustered covariance matrix estimation function from the `sandwich` package. [CAN WE ADD SOMETHING HERE ABOUT WHY WE WOULD DO THIS?]
+
+```{r}
+sdid_hosp_agg2 <- sdid(pct_hospitalized ~ cohort + yr + mean_age + pct_fem + pct_cmb,
+                      df = hosp_agg,
+                      weights = "n_enr",
+                      intervention_var  = "intervention_yr",
+                      .vcov = sandwich::vcovCL,
+                      cluster = hosp_agg$county)
+summary(sdid_hosp)
+```
 

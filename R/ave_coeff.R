@@ -1,14 +1,7 @@
 #' Aggregate a specified set of terms and corresponding standard errors from an sdid model object
 #'
-#' @param mdl sdid object containing the model to summarize
-#' @param df data frame containing the variables in the model
-#' @param vcv variance-covariance corresponding to `mdl`
-#' @param select_vars list of variables selected for averaging; if NULL, then [SOMETHING] must be specified
-#' @param cohort_name character string for how cohorts are named. Must be specified if `select_vars` is NULL.
-#' @param cohort_numbers list of cohort numbers selected for averaging. Must be specified if `select_vars` is NULL.
-#' @param tsi_numbers list of time-since-intervention periods selected for averaging. Must be specified if `select_vars` is NULL.
-#' @param pop_var name of variable showing population numbers (aggregate data only); if NULL, use nrow (i.e., number of rows = number of observations)
-#'
+#' @param sdid sdid object containing the model to summarize
+#' @param coefs character vector containing the names of coefficients to aggregate. Can be specified using `select_period()` or `select_terms()`.
 #' @return data.frame
 #' @export ave_coeff
 
@@ -60,7 +53,7 @@ ave_coeff <- function(sdid, coefs) {
   ave_pval <- stats::qnorm(0.975)*pt(abs(ave_est/ave_se), df, lower=FALSE)
 
   ## Make into a df table
-  ave_res <- data.table(est  = ave_est,
+  ave_res <- data.frame(est  = ave_est,
                         se   = ave_se ,
                         pval = ave_pval,
                         sign = data.table::fcase(ave_pval < .01                  , "***",

@@ -172,7 +172,6 @@ sdid <- function(formula,
                 weights = df_prepped[[weights]])
     }
   }
-  # vcv <- .vcov(mdl)
   vcv <- .vcov(mdl, ...)
 
   # Identify time since intervention

@@ -4,12 +4,14 @@
 \alias{select_period}
 \title{Retrieve a list of interaction terms from a sdid model representing the pre-intervention period}
 \usage{
-select_period(mdl, period = "post", cohorts = NULL)
+select_period(sdid, period = "post", cohorts = NULL)
 }
 \arguments{
-\item{mdl}{sdid object}
+\item{sdid}{sdid object}
 
-\item{cohorts}{character vector containing cohort levels to include in the term selection. If \code{cohorts} is omitted, all available cohorts will be selected.}
+\item{period}{one of 'pre' or 'post', to return the pre-intervention or post-intervention coefficients respectively}
+
+\item{cohorts}{character vector containing cohort levels to include in the term selection. If \code{cohorts} is omitted, all available cohorts will be selected}
 }
 \value{
 character vector
