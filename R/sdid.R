@@ -119,8 +119,13 @@ sdid <- function(formula,
   obs_cnt <- expand.grid(cohort_dummies, time_dummies)
   colnames(obs_cnt) <- c("cohort", "time")
   obs_cnt$n_obs <- mapply(function(cohort, time) {
-    nrow(df_prepped[eval(parse(text = paste0("df_prepped$", cohort, "==1 & ",
-                                             "df_prepped$", time, "==1"))), ])
+    if(is.null(weights)) {
+      nrow(df_prepped[eval(parse(text = paste0("df_prepped$", cohort, "==1 & ",
+                                               "df_prepped$", time, "==1"))), ])
+    } else {
+      sum(df_prepped[eval(parse(text = paste0("df_prepped$", cohort, "==1 & ",
+                                               "df_prepped$", time, "==1"))), weights])
+    }
   },
   obs_cnt$cohort, obs_cnt$time)
 

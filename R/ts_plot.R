@@ -25,7 +25,7 @@ ts_plot <- function(formula = NULL,
                     df,
                     tsi = NULL,
                     weights = NULL,
-                    ncol = 3) {
+                    ncol = 2) {
 
   # Make sure df is a data.frame
   df <- as.data.frame(df)
