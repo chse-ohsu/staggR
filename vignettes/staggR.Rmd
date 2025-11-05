@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-staggR: fit difference-in-differences models with staggered interventions
+staggR: Fit difference-in-differences models with staggered interventions
 =====================
 
 The `staggR` package fits linear difference-in-differences models in scenarios where intervention roll-outs are

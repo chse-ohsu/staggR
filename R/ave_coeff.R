@@ -56,10 +56,9 @@ ave_coeff <- function(sdid, coefs) {
   ave_res <- data.frame(est  = ave_est,
                         se   = ave_se ,
                         pval = ave_pval,
-                        sign = data.table::fcase(ave_pval < .01                  , "***",
-                                                 ave_pval >= .01 & ave_pval < .05, "**" ,
-                                                 ave_pval >  .05 & ave_pval < .1 , "*"  ,
-                                                 ave_pval >= .1                  , ""   ),
+                        sign = ifelse(ave_pval < 0.01, "***",
+                                      ifelse(ave_pval < 0.05, "**",
+                                             ifelse(ave_pval < 0.1,  "*", ""))),
                         lb   = (ave_est - 1.96*ave_se),
                         ub   = (ave_est + 1.96*ave_se),
                         n    = sum(n_obs))
