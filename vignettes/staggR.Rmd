@@ -4,12 +4,12 @@ output: rmarkdown::html_vignette
 bibliography: references.bib
 csl: american-medical-association.csl
 vignette: >
-%\VignetteIndexEntry{staggR}
+  %\VignetteIndexEntry{staggR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  ---
-  
-  ```{r, include = FALSE}
+---
+
+```{r, include = FALSE}
 knitr::opts_chunk$set(
 collapse = TRUE,
 comment = "#>"
@@ -31,8 +31,7 @@ approach that proceeds in two steps:
 
 1. Estimate a difference-in-differences regression with cohort- and (calendar) time-specific parameters;
 
-2. Translate difference-in-differences estimates into average estimates for arbitrary time periods relative to the
-intervention (e.g., post-intervention period).
+2. Translate difference-in-differences estimates into average estimates for arbitrary time periods relative to the intervention (e.g., post-intervention period).
 
 By separating these two steps, we provide an easy-to-implement, transparent, intuitive difference-in-differences
 framework.
