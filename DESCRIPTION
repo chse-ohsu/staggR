@@ -26,5 +26,5 @@ Suggests:
     sandwich
 VignetteBuilder: knitr
 Imports: 
-    ggplot2 (>= 3.0.0)
+    ggplot2 (>= 3.0.0),
     stats (>= 4.5.1)
