@@ -5,14 +5,47 @@
 #' @return an object of class `summary.sdid_mdl`.
 #' @exportS3Method summary sdid_mdl
 summary.sdid_mdl <- function(object, ...) {
-  out <- stats::summary.lm(object$mdl)
+  out <- list(formulas = object$formula,
+              r_squared = stats::summary.lm(object$mdl)[["r.squared"]],
+              adj_r_squared = stats::summary.lm(object$mdl)[["adj.r.squared"]],
+              residuals = stats::summary.lm(object$mdl)[["residuals"]],
+              df = stats::summary.lm(object$mdl)[["df"]],
+              coefficients = data.frame(term = names(coef(object$mdl)),
+                                        estimate = coef(object$mdl),
+                                        std_error = sqrt(diag(object$vcov)),
+                                        t_value = coef(object$mdl) / sqrt(diag(object$vcov))))
+  # Calculate p-values
+  out$coefficients$p_value <- 2 * (1 - pt(abs(out$coefficients$t_value), df = out$df[[2]]))
+
+
   class(out) <- c("summary.sdid_mdl", class(out))
   return(out)
 }
 
 # Pretty printer
 #' @exportS3Method print summary.sdid_mdl
-print.summary.sdid_mdl <- function(x, ...) {
-  cat("<summary.sdid_mdl>\n")
-  NextMethod()  # falls back to summary.lm printing
+print.summary.sdid_mdl <- function(x, precision = 5) {
+  cat("\nSupplied formula:\n"); print(x$formulas$supplied, showEnv = FALSE)
+  cat("\nFitted formula:\n"); print(x$formulas$fitted, showEnv = FALSE)
+  cat("\nResiduals:\n")
+  print(data.frame(Min = round(min(x$residuals), 4),
+                   Q1 = round(quantile(x$residuals, 0.25), 4),
+                   Median = round(median(x$residuals), 4),
+                   Q3 = round(quantile(x$residuals, 0.75), 4),
+                   Max = round(max(x$residuals), 4)), row.names = FALSE)
+  # Format coefficients table
+  fmt_pval <- function(x) {
+    ifelse(abs(x) < 1 / (10^precision),
+           sprintf(paste0("%.", precision - 4, "e"), x),  # scientific notation for very small values
+           sprintf(paste0("%.", precision, "f"), x))  # fixed 5 decimal places otherwise
+  }
+  coefs_output <- as.data.frame(x$coefficients, stringsAsFactors = FALSE)
+  coefs_output$p_value <- paste0(fmt_pval(coefs_output$p_value))
+  coefs_output$` ` <- format(cut(out$coefficients$p_value,
+                                 breaks = c(0, 0.001, 0.01, 0.05, 0.1, 1),
+                                 labels = c("***", "**", "*", ".", ""),
+                                 right = FALSE),
+                             justify = "left")
+  cat("\nCoefficients:\n")
+  print.data.frame(coefs_output, row.names = FALSE)
 }

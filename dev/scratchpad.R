@@ -8,36 +8,16 @@ data(hosp)
 #' ****************************************************************************************************
 #' # Fit model
 
-hosp <- hosp %>% mutate(policy_yr = lubridate::year(intervention_dt))
-
-foo <- sdid(df = hosp,
-            y <- "y",
-            cohort_var = "cohort",
-            cohort_ref = "0",
-            cohort_time_refs = list(`5` = "2014",
-                                    `6` = "2015",
-                                    `7` = "2016",
-                                    `8` = "2017"),
-            time_var = "yr",
-            time_ref = "2010",
-            intervention_var = "policy_yr",
-            covariates = c("age", "sex", "comorb"))
-ave_coeff(sdid = foo,
-          coefs = select_period(mdl = foo,
+sdid_hosp <- sdid("hospitalized ~ cohort + yr + age + sex + comorb",
+                  df = hosp,
+                  intervention_var = "intervention_yr",
+                  .vcov = sandwich::vcovCL,
+                  cluster = hosp$county)
+ave_coeff(sdid = sdid_hosp,
+          coefs = select_period(sdid = sdid_hosp,
                                 period = "pre"))
-ave_coeff(sdid = foo,
-          coefs = select_period(mdl = foo,
-                                period = "post"))
-
-
-foo <- sdid("y ~ cohort + yr + age + sex + comorb",
-            df = hosp,
-            intervention_var = "policy_yr")
-ave_coeff(sdid = foo,
-          coefs = select_period(mdl = foo,
-                                period = "pre"))
-ave_coeff(sdid = foo,
-          coefs = select_period(mdl = foo,
+ave_coeff(sdid = sdid_hosp,
+          coefs = select_period(sdid = sdid_hosp,
                                 period = "post"))
 
 #' ****************************************************************************************************
