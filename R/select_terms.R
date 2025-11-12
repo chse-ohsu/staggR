@@ -1,26 +1,26 @@
 #' Retrieve a list of interaction terms from a sdid model to be passed on for aggregation
 #'
-#' @param mdl sdid object
+#' @param sdid sdid object
 #' @param coefs optional list of specific terms from `mdl` to be selected
 #' @param selection list object containing values for named elements `cohorts`, `times`, and `tsi`. `cohorts` contains a character vector of cohort levels to include in the term selection; `times` contains a character vector of time period levels to include in the term selection; and `tsi` contains a vector of integers representing the number of units of time relative to each cohort's intervention to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected. One of `times` or `tsi` must be specified. If both are specified, `times` is ignored.
 #'
 #' @return character vector
 #' @export select_terms
 
-select_terms <- function(mdl, coefs = NULL, selection = NULL) {
+select_terms <- function(sdid, coefs = NULL, selection = NULL) {
   # Validate that selection$cohorts contains valid cohort levels
-  if(is.null(coefs) & !all(selection$cohorts %in% unique(mdl$tsi$cohort))) {
+  if(is.null(coefs) & !all(selection$cohorts %in% unique(sdid$tsi$cohort))) {
     stop(paste0("One or more supplied values for cohorts (",
                 paste(selection$cohorts, collapse = ", "),
                 ") are invalid cohort levels.\n",
                 "Must match one or more of {",
-                paste(unique(mdl$tsi$cohort), collapse = ", "),
+                paste(unique(sdid$tsi$cohort), collapse = ", "),
                 "}."))
   }
 
   # If the user specified coefs, check that all coefs appear in the model
   if(!is.null(coefs)) {
-    if(!all(coefs %in% names(mdl$mdl$coefficients))) {
+    if(!all(coefs %in% names(sdid$mdl$coefficients))) {
       stop(paste0("Specified coefs must be contained in sdid model coefficients."))
     }
   }
@@ -29,19 +29,19 @@ select_terms <- function(mdl, coefs = NULL, selection = NULL) {
   # the referent
   if(is.null(selection$cohorts)) {
     selection$cohorts <-
-      unique(mdl$tsi[mdl$tsi[["cohort"]] != mdl$cohort$ref, "cohort"])
+      unique(sdid$tsi[sdid$tsi[["cohort"]] != sdid$cohort$ref, "cohort"])
   }
 
   # The user specified cohorts and times, but not tsi
   if(is.null(coefs) &
      !is.null(selection$times) & is.null(selection$tsi)) {
-    prelim_coefs <- with(mdl$cohort, paste0(
+    prelim_coefs <- with(sdid$cohort, paste0(
       var, "_", rep(selection$cohorts[selection$cohorts != ref],
                        each = length(selection$times)),
-      ":", mdl$time$var, "_", rep(selection$times,
+      ":", sdid$time$var, "_", rep(selection$times,
                           times = length(selection$cohorts))))
     # Check that all terms appear in the list of coefficients
-    if(!all(prelim_coefs %in% names(mdl$mdl$coefficients))) {
+    if(!all(prelim_coefs %in% names(sdid$mdl$coefficients))) {
       stop("This generates named interaction terms that do not appear in the model's coefficients.")
     } else coefs <- prelim_coefs
 
@@ -59,14 +59,14 @@ select_terms <- function(mdl, coefs = NULL, selection = NULL) {
     }
 
     # Restrict tsi dataset to the specified cohorts
-    tsi <- mdl$tsi[mdl$tsi$cohort %in% selection$cohorts, ]
+    tsi <- sdid$tsi[sdid$tsi$cohort %in% selection$cohorts, ]
 
     # Restrict tsi dataset to just the requested tsis
     tsi <- tsi[tsi$tsi %in% selection$tsi, ]
 
     # Exclude referent time periods
     for(cohort_lvl in unique(tsi$cohort)) {
-      tsi$time_ref[tsi$cohort == cohort_lvl] <- mdl$cohort$time_refs[[cohort_lvl]]
+      tsi$time_ref[tsi$cohort == cohort_lvl] <- sdid$cohort$time_refs[[cohort_lvl]]
     }
     tsi <- tsi[tsi$time != tsi$time_ref,]
 
@@ -83,14 +83,14 @@ select_terms <- function(mdl, coefs = NULL, selection = NULL) {
 
     # Now retrieve the values of the relevant interaction terms
     tsi$coefs <- with(tsi,
-                       paste0(mdl$cohort$var, "_", cohort,
+                       paste0(sdid$cohort$var, "_", cohort,
                               ":",
-                              mdl$time$var, "_", time))
+                              sdid$time$var, "_", time))
 
     prelim_coefs <- tsi[, "coefs"]
 
     # Check that all terms appear in the list of coefficients
-    if(!all(prelim_coefs %in% names(mdl$mdl$coefficients))) {
+    if(!all(prelim_coefs %in% names(sdid$mdl$coefficients))) {
       stop("This generates named interaction terms that do not appear in the model's coefficients.")
     } else coefs <- prelim_coefs
 
@@ -104,7 +104,7 @@ select_terms <- function(mdl, coefs = NULL, selection = NULL) {
   }
 
   # Check that all terms appear in the list of coefficients
-  if(!all(coefs %in% names(mdl$mdl$coefficients))) {
+  if(!all(coefs %in% names(sdid$mdl$coefficients))) {
     stop("Selected terms (",
          paste(coefs, collapse = ", "),
          ") do not all appear in the model's list of coefficients.")

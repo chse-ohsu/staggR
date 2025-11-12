@@ -25,6 +25,7 @@ summary.sdid_mdl <- function(object, ...) {
 # Pretty printer
 #' @exportS3Method print summary.sdid_mdl
 print.summary.sdid_mdl <- function(x, precision = 5) {
+  # Format top matter
   cat("\nSupplied formula:\n"); print(x$formulas$supplied, showEnv = FALSE)
   cat("\nFitted formula:\n"); print(x$formulas$fitted, showEnv = FALSE)
   cat("\nResiduals:\n")
@@ -33,6 +34,7 @@ print.summary.sdid_mdl <- function(x, precision = 5) {
                    Median = round(median(x$residuals), 4),
                    Q3 = round(quantile(x$residuals, 0.75), 4),
                    Max = round(max(x$residuals), 4)), row.names = FALSE)
+
   # Format coefficients table
   fmt_pval <- function(x) {
     ifelse(abs(x) < 1 / (10^precision),
@@ -41,11 +43,17 @@ print.summary.sdid_mdl <- function(x, precision = 5) {
   }
   coefs_output <- as.data.frame(x$coefficients, stringsAsFactors = FALSE)
   coefs_output$p_value <- paste0(fmt_pval(coefs_output$p_value))
-  coefs_output$` ` <- format(cut(out$coefficients$p_value,
+  coefs_output$` ` <- format(cut(x$coefficients$p_value,
                                  breaks = c(0, 0.001, 0.01, 0.05, 0.1, 1),
                                  labels = c("***", "**", "*", ".", ""),
                                  right = FALSE),
                              justify = "left")
   cat("\nCoefficients:\n")
   print.data.frame(coefs_output, row.names = FALSE)
+  cat("\nSignificance codes: < 0.001: '**'; < 0.01: '**'; < 0.05: '*'; < 0.1: '.'\n")
+
+  # Format bottom matter
+  cat(paste0("Residual standard error: ", round(sd(x$residuals), 4), " on ",
+             x$df[[2]], " degrees of freedom\n"))
+  cat(paste0("R^2: ", x$r_squared, "; ", "Adjusted R^2: ", x$adj_r_squared, "\n"))
 }
