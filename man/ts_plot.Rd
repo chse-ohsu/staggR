@@ -13,7 +13,7 @@ ts_plot(
   df,
   tsi = NULL,
   weights = NULL,
-  ncol = 3
+  ncol = 2
 )
 }
 \arguments{

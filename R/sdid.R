@@ -93,6 +93,7 @@ sdid <- function(formula,
   if(!all(c(cohort_var, time_var, intervention_var, covariates) %in% names(df))) {
     stop("cohort_var, time_var, intervention_var, and all covariates must match column names in df.")
   }
+
   # Make sure intervention_var is consistent within each cohort
   if(nrow(unique(df[, c(cohort_var, intervention_var)])) != length(unique(df[[cohort_var]]))) {
     stop("Values of `intervention_var` are not consistent within each cohort.")
@@ -103,6 +104,16 @@ sdid <- function(formula,
 
   # If time_ref is not specified, choose the first level
   if(is.null(time_ref)) time_ref <- levels(factor(df[[time_var]]))[[1]]
+
+  # Validate that there are no NAs in cohort_var or time_var; omit rows with any NAs
+  if((n_missing_cohort_var <- nrow(df[is.na(df[[cohort_var]]), ])) > 0) {
+    warning(n_missing_cohort_var, " observations deleted due to missing values in `", cohort_var, "`.")
+    df <- df[!is.na(df[[cohort_var]])]
+  }
+  if((n_missing_time_var <- nrow(df[is.na(df[[time_var]]), ])) > 0) {
+    warning(n_missing_time_var, " observations deleted due to missing values in `", time_var, "`.")
+    df <- df[!is.na(df[[time_var]])]
+  }
 
   # Prepare data by creating dummy variables
   df_prepped <- prep_data(df = df,

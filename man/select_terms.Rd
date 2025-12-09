@@ -4,10 +4,10 @@
 \alias{select_terms}
 \title{Retrieve a list of interaction terms from a sdid model to be passed on for aggregation}
 \usage{
-select_terms(mdl, coefs = NULL, selection = NULL)
+select_terms(sdid, coefs = NULL, selection = NULL)
 }
 \arguments{
-\item{mdl}{sdid object}
+\item{sdid}{sdid object}
 
 \item{coefs}{optional list of specific terms from \code{mdl} to be selected}
 

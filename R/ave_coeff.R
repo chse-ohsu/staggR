@@ -21,11 +21,18 @@ ave_coeff <- function(sdid, coefs) {
 
   # Step 1: Calculate population fractions and extract estimates
 
-  ## Number of observations for each specified interaction coeff
-  n_obs <- sapply(coefs[grepl(":", coefs)], function(coeff) {
-    coeff_parts <- unlist(strsplit(coeff, ":"))
-    return(sdid$obs_cnt[sdid$obs_cnt$cohort == coeff_parts[[1]] &
-                          sdid$obs_cnt$time == coeff_parts[[2]], "n_obs"])
+  ## Number of observations for each specified coeff
+  n_obs <- sapply(coefs, function(coeff) {
+    if(grepl(pattern = ":", x = coeff)) {
+      coeff_parts <- unlist(strsplit(coeff, ":"))
+      rtn_cnt <- sdid$obs_cnt[sdid$obs_cnt$cohort == coeff_parts[[1]] &
+                                sdid$obs_cnt$time == coeff_parts[[2]], "n_obs"]
+    } else {
+      rtn_cnt <- sum(sdid$obs_cnt[sdid$obs_cnt$cohort == coeff |
+                                    sdid$obs_cnt$time == coeff,
+                                  "n_obs"])
+    }
+    return(rtn_cnt)
   })
 
   ## Pct of population for each coefficient

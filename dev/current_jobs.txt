@@ -1,0 +1,4 @@
+(base) [3724442.staggR] 💻 arc-infra-1 📂 ~/.kyle/packages/staggR/dev (main) 💀  sbatch slurm_testwithpq.sbatch
+Submitted batch job 2876677
+(base) [3724442.staggR] 💻 arc-infra-1 📂 ~/.kyle/packages/staggR/dev (main) 💀  date
+Tue Dec  9 10:56:19 AM PST 2025

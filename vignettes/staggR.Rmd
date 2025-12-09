@@ -100,7 +100,6 @@ combining the corresponding standard errors using the estimated variance–covar
 users can also specify. This aggregation yields a single estimate that properly accounts for sampling variability and
 the correlation among underlying event-study coefficients.
 
-
 # Example using simulated data
 
 ## Explore data
@@ -149,9 +148,6 @@ stats::xtabs(hospitalized ~ county + yr,
 To visualize trends in the proportion of individuals who were hospitalized over time, we can call the function
 `ts_plot()`, which takes, at minimum, 3 arguments: a formula, in the format `outcome ~ group + time_var`, the source data set, and the name of the column that contains the time period during which each group implemented the intervention.
 
-{>>Kyle: I think it will help readers to be specific about the funciton we are using, and its arguments. I started that,
-let's discuss.<<}
-
 ```{r tsplot, fig.width = 10, fig.height = 10, out.width = "100%"}
 staggR::ts_plot(hospitalized ~ county + yr,
                 df = hosp,
@@ -169,7 +165,7 @@ staggR::ts_plot(y = "hospitalized",
 ```
 
 While this visualization is helpful, it excludes counties that did not implement the intervention. This is because the
-function `ts_plot()` omits any counties where any of `y`, `group`, `time_var`, (or our formula equivalent, `hospitalized ~ county + yr`) or the `intervention_var` are `NA`.{>>Kyle: should this be `intervention_yr`? Stephan: It should not. `intervention_var` is the name of the parameter; `intervention_yr` is the argument we passed to that paremter.<<}
+function `ts_plot()` omits any counties where any of `y`, `group`, `time_var`, (or our formula equivalent, `hospitalized ~ county + yr`) or the `intervention_var` are `NA`.
 
 ```{r}
 table(hosp$hospitalized, useNA = "always")
@@ -288,9 +284,6 @@ period, because that cohort's intervention took place in 2016. Indeed, we observ
 We can use the `cohort_time_refs` parameter to specify a different time period to function as the referent for
 cohort-time interactions:
 
-{>>Kyle: Could you also select a range, e.g., the full pre-intervention period? That would be useful.
-Stephan: Let's discuss.<<}
-
 ```{r}
 sdid_hosp_earlier_timeref <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
                                           df = hosp,
@@ -302,9 +295,6 @@ sdid_hosp_earlier_timeref <- staggR::sdid(hospitalized ~ cohort + yr + age + sex
 ```
 
 We can now proceed with the second, post-estimation step: translating difference-in-differences estimates into average estimates.
-
-{>>Kyle: I changed this transition sentence to better align with with the overview
-Stephan: I love it. <<}
 
 ## Calculating coefficient averages
 
@@ -329,13 +319,7 @@ staggR::ave_coeff(sdid = sdid_hosp,
 
 The result shows that the intervention is associated with an increase in the probability of hospitalization. 
 
-Next, we can use the `ave_coeff()` function to examine whether the risk of hospitalization differs by treatment group
-during the pre-intervention period. For that, we pass "pre" to the `period` argument, as follows:
-
-{>>Kyle: I am not quite tracking this part. Does this call calculate average diff-in-diff coefficients for the
-pre-intervention period? If so I'll rephrase the sentence a bit.
-Stephan: Let's discuss. Since this includes all cohorts except the referent (which is the control group, cohort 0), 
-I would interpret this result as the difference between exposed and unexposed during the pre-intervention period. That seems to fit with the sentence above. <<}
+Next, we can use the `ave_coeff()` function to examine whether the risk of hospitalization differs by treatment group during the pre-intervention period. For that, we pass "pre" to the `period` argument, as follows:
 
 ```{r}
 # Identify the coefficients that represent the difference between exposure groups 
@@ -351,10 +335,6 @@ Here we see risk of hospitalization during the pre-intervention period does not 
 
 We can also examine whether there exists heterogeneity in difference-in-differences
 estimates between various cohorts, using the `cohorts` parameter in the `select_period()` function. For instance, we could calculate the average of difference-in-differences estimates for the post-intervention period for cohorts 5 and 6.
-
-{>>Stephan: FYI in a function definition like `fun(x) cat(x)`, "x" is a parameter. If I call the function like `fun(5)`, 
-`5` is an argument.<<}
-{>>Kyle: I am spllitting these up to make it easier to follow the steps.<<}
 
 ```{r}
 # Identify the coefficients for the effect of the intervention on cohorts 5 and 6 
@@ -404,9 +384,6 @@ staggR::ave_coeff(sdid = sdid_hosp,
 
 If we are interested in the added risk of hospitalization associated with the intervention in the year 2018, but only for the first two cohorts (5 and 6), we could include a `cohorts` element in the `selection` list.
 
-{>>Kyle: We should describe the function `select_terms` here or above, when we introduce the function `select_period`.
-Stephan: Done.<<}
-
 ```{r}
 (terms_2018_cohorts56 <- staggR::select_terms(sdid = sdid_hosp,
                                               selection = list(cohorts = c("5", "6"),
@@ -432,9 +409,6 @@ Because outcomes within the same unit (in our case, county) are often correlated
 could understate uncertainty. Clustering standard errors allows for correlation within clusters while maintaining
 independence across them. Following Sun and Abraham @sun2021did, we can supply a custom variance–covariance function to
 compute standard errors clustered at the county level.
-
-{>>Kyle: I think this should go up because we would also want to do that for the individual-level data, correct?
-Stephan: Done!<<}
 
 ```{r}
 # Fit SDID model with standard errors clustered at the county level
@@ -480,7 +454,7 @@ sdid_hosp_agg <- staggR::sdid(pct_hospitalized ~ cohort + yr + mean_age + pct_fe
                               intervention_var  = "intervention_yr",
                               # Cluster standard errors at the county level
                               .vcov = sandwich::vcovCL,
-                               cluster = hosp$county)
+                              cluster = hosp_agg$county)
 ```
 
 Aggregating means that we decoupled values of these covariates from outcomes within county-years, so coefficients are

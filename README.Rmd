@@ -1,0 +1,54 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# staggR
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+staggR makes it easy to fit linear difference-in-differences models where interventions are staggered over time across multiple cohorts. The approach uses cohort- and time-since-treatment specific difference-in-differences parameters, and it provides convenience functions both for specifying the model and for flexibly aggregating coefficients to answer a variety of research questions.
+
+## Installation
+
+``` r
+install.packages("staggR")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(staggR)
+
+#' Fit the staggered DiD model
+sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr,
+                          df = hosp,
+                          intervention_var  = "intervention_yr",
+                          .vcov = sandwich::vcovCL,
+                          cluster = hosp$county)
+
+summary(sdid_hosp)
+
+#' What is the effect of the intervention in the post-intervention period?
+ave_coeff(sdid = sdid_hosp, 
+          coefs = select_period(sdid_hosp, period = "post"))
+
+```
+
+## Getting help
+
+If you encounter a problem, please file an issue with a minimal reproducible example on [GitHub](https://github.com/chse-ohsu/staggR). 
+
