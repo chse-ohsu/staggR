@@ -17,9 +17,23 @@ new_sdid(
 )
 }
 \arguments{
-\item{vcov}{A variance-covariance matrix}
+\item{mdl}{lm object containing the fitted model}
 
-\item{model}{A lm object}
+\item{formula}{a list object containing the supplied and fitted formulas}
+
+\item{vcov}{variance-covariance matrix calculated using the supplied vcov estimator}
+
+\item{tsi}{data frame containing a time-since-intervention crosswalk for each observed time period and cohort}
+
+\item{obs_cnt}{data frame containing the count of observations for each interaction term in the model}
+
+\item{cohort}{a list object containing elements \code{var} (the name of the column that contains cohort labels in the data frame used to fit the model), \code{ref} (the value of the cohor referent level), and \code{time_refs} (referent time period levels for each cohort)}
+
+\item{time}{a list object containing elements \code{var} (the name of the column that contains time period labels in the data frame used to fit the model) and \code{ref} (the value of the time period referent level).}
+
+\item{intervention_var}{name of the column denoting the time period during which each cohort implemented the intervention}
+
+\item{covariates}{character vector containing all covariates (other than cohort and time period) used to adjust the model}
 }
 \value{
 An object of class "sdid_mdl"

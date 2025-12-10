@@ -1,7 +1,14 @@
 #' Constructor for a sdid_mdl object
 #'
-#' @param model A lm object
-#' @param vcov A variance-covariance matrix
+#' @param mdl lm object containing the fitted model
+#' @param formula a list object containing the supplied and fitted formulas
+#' @param vcov variance-covariance matrix calculated using the supplied vcov estimator
+#' @param tsi data frame containing a time-since-intervention crosswalk for each observed time period and cohort
+#' @param obs_cnt data frame containing the count of observations for each interaction term in the model
+#' @param cohort a list object containing elements `var` (the name of the column that contains cohort labels in the data frame used to fit the model), `ref` (the value of the cohor referent level), and `time_refs` (referent time period levels for each cohort)
+#' @param time a list object containing elements `var` (the name of the column that contains time period labels in the data frame used to fit the model) and `ref` (the value of the time period referent level).
+#' @param intervention_var name of the column denoting the time period during which each cohort implemented the intervention
+#' @param covariates character vector containing all covariates (other than cohort and time period) used to adjust the model
 #'
 #' @return An object of class "sdid_mdl"
 #' @export

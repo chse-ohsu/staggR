@@ -25,7 +25,7 @@ id_tsi <- function(df,
   colnames(tsi) <- c("cohort", "time", "intervention_time")
 
   # Number the rows within each cohort
-  tsi$rn <- ave(
+  tsi$rn <- stats::ave(
     seq_len(nrow(tsi)), # the sequence to number
     tsi$cohort,         # grouping variable
     FUN = seq_along     # restart sequence for each group

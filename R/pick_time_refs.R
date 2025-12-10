@@ -50,7 +50,7 @@ pick_time_refs <- function(df, cohort_var, cohort_ref, time_var, intervention_va
             return(time_ref)
           } else {
             stop("No time period level '", time_ref,
-                 "' corresponding to cohort index ", cohort_lvls[[i]], "\n",
+                 "' corresponding to cohort index ", cohort_lvls[[c_lvl]], "\n",
                  "Either pass a named list to parameter `time_refs` or ",
                  "make sure cohort levels match time period levels.")
           }

@@ -57,7 +57,7 @@ ave_coeff <- function(sdid, coefs) {
   df <- sdid$mdl$df.residual
 
   ## Calculate p-value, assuming normal distribution
-  ave_pval <- stats::qnorm(0.975)*pt(abs(ave_est/ave_se), df, lower=FALSE)
+  ave_pval <- stats::qnorm(0.975)*stats::pt(abs(ave_est/ave_se), df, lower=FALSE)
 
   ## Make into a df table
   ave_res <- data.frame(est  = ave_est,

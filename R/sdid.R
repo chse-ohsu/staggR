@@ -21,7 +21,7 @@
 #'
 #' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under 'Details'.
 #' @param df data frame containing the variables in the model.
-#' @param weights an optional vector of weights to be passed to `lm()` to be used in the fitting process. Should be NULL or a numeric vector.
+#' @param weights an optional vector of weights to be passed to `stats::lm()` to be used in the fitting process. Should be NULL or a numeric vector.
 #' @param cohort_var name of the variable in `df` that contains cohort assignments. If NULL, this is assumed to be the first column named in the right hand side of `formula`.
 #' @param cohort_ref value of `cohort_var` that serves as the referent for main effects for cohorts. If NULL, this is assumed to the be the first value in the set of values for `cohort_var`.
 #' @param cohort_time_refs a list, whose elements are named to match levels of `cohort_var`, specifying the value of `time_var` that serves as the referent for each time interaction with values of `cohort_var`. See 'Details.'
@@ -34,10 +34,10 @@
 #' @return `sdid()` returns an object of class "sdid", which is a list containing the following components:
 #'
 #' mdl
-#' : The `lm` object returned from the call to `lm()` in `sdid()`
+#' : The `lm` object returned from the call to `stats::lm()` in `sdid()`
 #'
 #' formula
-#' : A list object containing both the original formula specified in the call to `sdid()` and the generated formula, with all cohort-time interactions, passed to `lm()` to fit the model
+#' : A list object containing both the original formula specified in the call to `sdid()` and the generated formula, with all cohort-time interactions, passed to `stats::lm()` to fit the model
 #'
 #' vcov
 #' : The variance-covariance matrix used to estimate standard errors
@@ -77,7 +77,7 @@ sdid <- function(formula,
   y <- formula[[2]]
 
   # Retrieve RHS terms from formula
-  trm <- terms(formula)
+  trm <- stats::terms(formula)
 
   ## If cohort_var is not specified, pull it from the first RHS term in the formula
   if(is.null(cohort_var)) cohort_var <- attr(trm,  "term.labels")[[1]]
@@ -135,7 +135,7 @@ sdid <- function(formula,
                                                "df_prepped$", time, "==1"))), ])
     } else {
       sum(df_prepped[eval(parse(text = paste0("df_prepped$", cohort, "==1 & ",
-                                               "df_prepped$", time, "==1"))), weights])
+                                              "df_prepped$", time, "==1"))), weights])
     }
   },
   obs_cnt$cohort, obs_cnt$time)
@@ -150,7 +150,7 @@ sdid <- function(formula,
   }
 
   # Check that cohort_time_refs is a list object corresponding to cohort levels
-  if(class(cohort_time_refs) != "list" | any(sort(names(cohort_time_refs)) != sort(cohort_lvls))) {
+  if(!inherits(cohort_time_refs, "list") | any(sort(names(cohort_time_refs)) != sort(cohort_lvls))) {
     stop("cohort_time_refs must be a list object with elements named to match the levels of cohort_var.")
   }
 
@@ -173,8 +173,8 @@ sdid <- function(formula,
   # Fit model
   ## Unweighted
   if(is.null(weights)) {
-    mdl <- lm(formula = fml,
-              data = df_prepped)
+    mdl <- stats::lm(formula = fml,
+                     data = df_prepped)
   } else {
     ## Weighted
     if(!(weights %in% colnames(df_prepped))) {
@@ -183,9 +183,9 @@ sdid <- function(formula,
            "` does not exist in ",
            deparse(substitute(df)), ".")
     } else {
-      mdl <- lm(formula = fml,
-                data = df_prepped,
-                weights = df_prepped[[weights]])
+      mdl <- stats::lm(formula = fml,
+                       data = df_prepped,
+                       weights = df_prepped[[weights]])
     }
   }
   vcv <- .vcov(mdl, ...)
@@ -194,9 +194,9 @@ sdid <- function(formula,
   # Create a dataset that contains all the unique values of cohort_var,
   # time_var, and tsi_var.
   tsi <- id_tsi(df = df,
-             cohort_var = cohort_var,
-             time_var = time_var,
-             intervention_var = intervention_var)
+                cohort_var = cohort_var,
+                time_var = time_var,
+                intervention_var = intervention_var)
 
   # Create return object
   rslts <- new_sdid(mdl = mdl,

@@ -33,8 +33,9 @@ prep_data <- function(df, cohort_var, cohort_ref=NULL, time_var, time_ref=NULL) 
   }
 
   # If cohort_var or time_var are not factors, convert them to factors
-  if(class(df[[cohort_var]]) != "factor") df[[cohort_var]] <- factor(df[[cohort_var]])
-  if(class(df[[time_var]]) != "factor") df[[time_var]] <- factor(df[[time_var]])
+
+  if(!inherits(df[[cohort_var]], "factor")) df[[cohort_var]] <- factor(df[[cohort_var]])
+  if(!inherits(df[[time_var]], "factor")) df[[time_var]] <- factor(df[[time_var]])
 
   # Identify referents if not passed through params
   if(is.null(cohort_ref)) {

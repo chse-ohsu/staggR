@@ -10,12 +10,12 @@ summary.sdid_mdl <- function(object, ...) {
               adj_r_squared = stats::summary.lm(object$mdl)[["adj.r.squared"]],
               residuals = stats::summary.lm(object$mdl)[["residuals"]],
               df = stats::summary.lm(object$mdl)[["df"]],
-              coefficients = data.frame(term = names(coef(object$mdl)),
-                                        estimate = coef(object$mdl),
+              coefficients = data.frame(term = names(stats::coef(object$mdl)),
+                                        estimate = stats::coef(object$mdl),
                                         std_error = sqrt(diag(object$vcov)),
-                                        t_value = coef(object$mdl) / sqrt(diag(object$vcov))))
+                                        t_value = stats::coef(object$mdl) / sqrt(diag(object$vcov))))
   # Calculate p-values
-  out$coefficients$p_value <- 2 * (1 - pt(abs(out$coefficients$t_value), df = out$df[[2]]))
+  out$coefficients$p_value <- 2 * (1 - stats::pt(abs(out$coefficients$t_value), df = out$df[[2]]))
 
 
   class(out) <- c("summary.sdid_mdl", class(out))
@@ -24,15 +24,15 @@ summary.sdid_mdl <- function(object, ...) {
 
 # Pretty printer
 #' @exportS3Method print summary.sdid_mdl
-print.summary.sdid_mdl <- function(x, precision = 5) {
+print.summary.sdid_mdl <- function(x, precision = 5, ...) {
   # Format top matter
   cat("\nSupplied formula:\n"); print(x$formulas$supplied, showEnv = FALSE)
   cat("\nFitted formula:\n"); print(x$formulas$fitted, showEnv = FALSE)
   cat("\nResiduals:\n")
   print(data.frame(Min = round(min(x$residuals), 4),
-                   Q1 = round(quantile(x$residuals, 0.25), 4),
-                   Median = round(median(x$residuals), 4),
-                   Q3 = round(quantile(x$residuals, 0.75), 4),
+                   Q1 = round(stats::quantile(x$residuals, 0.25), 4),
+                   Median = round(stats::median(x$residuals), 4),
+                   Q3 = round(stats::quantile(x$residuals, 0.75), 4),
                    Max = round(max(x$residuals), 4)), row.names = FALSE)
 
   # Format coefficients table
@@ -53,7 +53,7 @@ print.summary.sdid_mdl <- function(x, precision = 5) {
   cat("\nSignificance codes: < 0.001: '**'; < 0.01: '**'; < 0.05: '*'; < 0.1: '.'\n")
 
   # Format bottom matter
-  cat(paste0("Residual standard error: ", round(sd(x$residuals), 4), " on ",
+  cat(paste0("Residual standard error: ", round(stats::sd(x$residuals), 4), " on ",
              x$df[[2]], " degrees of freedom\n"))
   cat(paste0("R^2: ", x$r_squared, "; ", "Adjusted R^2: ", x$adj_r_squared, "\n"))
 }

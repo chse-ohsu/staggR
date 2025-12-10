@@ -23,7 +23,7 @@ sdid(
 
 \item{df}{data frame containing the variables in the model.}
 
-\item{weights}{an optional vector of weights to be passed to \code{lm()} to be used in the fitting process. Should be NULL or a numeric vector.}
+\item{weights}{an optional vector of weights to be passed to \code{stats::lm()} to be used in the fitting process. Should be NULL or a numeric vector.}
 
 \item{cohort_var}{name of the variable in \code{df} that contains cohort assignments. If NULL, this is assumed to be the first column named in the right hand side of \code{formula}.}
 
@@ -45,10 +45,10 @@ sdid(
 \code{sdid()} returns an object of class "sdid", which is a list containing the following components:
 
 mdl
-: The \code{lm} object returned from the call to \code{lm()} in \code{sdid()}
+: The \code{lm} object returned from the call to \code{stats::lm()} in \code{sdid()}
 
 formula
-: A list object containing both the original formula specified in the call to \code{sdid()} and the generated formula, with all cohort-time interactions, passed to \code{lm()} to fit the model
+: A list object containing both the original formula specified in the call to \code{sdid()} and the generated formula, with all cohort-time interactions, passed to \code{stats::lm()} to fit the model
 
 vcov
 : The variance-covariance matrix used to estimate standard errors

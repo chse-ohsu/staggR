@@ -39,7 +39,7 @@ ts_plot <- function(formula = NULL,
     y <- formula[[2]]
 
     # Retrieve RHS terms from formula
-    trm <- terms(formula)
+    trm <- stats::terms(formula)
 
     ## If `group` is not specified, pull it from the first RHS term in the formula
     if(is.null(group)) group <- attr(trm,  "term.labels")[[1]]
@@ -67,7 +67,7 @@ ts_plot <- function(formula = NULL,
   # Plot with time period on the X axis
   if(is.null(tsi)) {
     # Plot time series for all counties
-    agg <- stats::aggregate(as.formula(paste0(y, " ~ ", group, " + ", time_var, " + ", intervention_var)),
+    agg <- stats::aggregate(stats::as.formula(paste0(y, " ~ ", group, " + ", time_var, " + ", intervention_var)),
                             data = df,
                             FUN = mean)
 
@@ -105,7 +105,7 @@ ts_plot <- function(formula = NULL,
     df_tsi$rn <- NULL
 
     # Merge with df
-    agg <- stats::aggregate(as.formula(paste0(y, " ~ ", group, " + tsi")),
+    agg <- stats::aggregate(stats::as.formula(paste0(y, " ~ ", group, " + tsi")),
                             data = merge(df, df_tsi,
                                          by = c(group, time_var, intervention_var)),
                             FUN = mean)
