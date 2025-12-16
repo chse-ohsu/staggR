@@ -4,15 +4,16 @@ Title: Fit Difference-in-Differences Models With Staggered Interventions
 Version: 0.1.0
 Authors@R: c(person("Kyle", "Hart",
                     email = "hartky@ohsu.edu",
-                    role = c("aut", "cre")),
+                    role = c("aut", "cre", "cph")),
              person("Stephan", "Lindner",
                     role = c("aut")))
-Description: A package for fitting linear difference-in-differences models in 
-  scenarios where intervention roll-outs are staggered over time. The package 
-  implements a version of an approach proposed by Sun and Abraham to estimate
-  cohort- and time-since-treatment specific difference-in-differences parameters, 
-  and it provides convenience functions both for specifying the model and for 
-  flexibly aggregating coefficients to answer a variety of research questions. 
+Maintainer: Kyle Hart <hartky@ohsu.edu>
+Description: Fits linear difference-in-differences models in scenarios where
+    intervention roll-outs are staggered over time. The package implements a 
+    version of an approach proposed by Sun and Abraham to estimate cohort- and 
+    time-since-treatment specific difference-in-differences parameters, and it 
+    provides convenience functions both for specifying the model and for 
+    flexibly aggregating coefficients to answer a variety of research questions. 
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
