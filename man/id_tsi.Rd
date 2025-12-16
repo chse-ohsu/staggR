@@ -18,3 +18,8 @@ id_tsi(df, cohort_var, time_var, intervention_var)
 \description{
 \code{id_tsi()} uses a supplied data set to identify the number of time periods away from the intervention each observation is. This is important for plotting and for aggregating model coefficients in \code{ave_coeff()}.
 }
+\examples{
+# Generate a `tsi` object, containing a data frame showing the time since intervention
+# (TSI value) for each time period in the data frame for each cohort.
+id_tsi(hosp, cohort_var = "cohort", time_var = "yr", intervention_var = "intervention_yr")
+}

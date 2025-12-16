@@ -19,3 +19,29 @@ character vector
 \description{
 Retrieve a list of interaction terms from a sdid model representing the pre-intervention period
 }
+\examples{
+# Fit a staggered difference-in-differences model
+sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                          df = hosp,
+                          intervention_var  = "intervention_yr")
+
+# Select coefficients corresponding to the PRE-intervention period for cohort 5
+coef_selection_pre <- select_period(sdid_hosp,
+                                period = "pre",
+                                cohorts = "5")
+coef_selection_pre
+
+# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+# intervention
+ave_coeff(sdid_hosp, coefs = coef_selection_pre)
+
+# Select coefficients corresponding to the POST-intervention period for cohort 5
+coef_selection_post <- select_period(sdid_hosp,
+                                     period = "post",
+                                     cohorts = "5")
+coef_selection_post
+
+# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+# intervention
+ave_coeff(sdid_hosp, coefs = coef_selection_post)
+}

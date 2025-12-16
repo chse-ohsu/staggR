@@ -61,6 +61,13 @@
 #'
 
 #' @export sdid
+#' @examples
+#' # Fit a staggered difference-in-differences model
+#' sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+#'                   df = hosp,
+#'                   intervention_var  = "intervention_yr")
+#' summary(sdid_hosp)
+
 
 sdid <- function(formula,
                  df,

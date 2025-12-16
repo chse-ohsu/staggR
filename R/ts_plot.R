@@ -16,6 +16,19 @@
 #' @return returns an object of class "ggplot"
 #' @import ggplot2
 #' @export ts_plot
+#' @examples
+#' # Use a formula to specify the setup of the time-series plot. Here we set
+#'   `hospitalized` as the outcome, faceted by `county`, with `yr` on the X axis.
+#' ts_plot(hospitalized ~ county + yr,
+#'         df = hosp,
+#'         intervention_var = "intervention_yr")
+#'
+#' # We can specify the same plot without using a formula.
+#' ts_plot(y = "hospitalized",
+#'         group = "county",
+#'         time_var = "yr",
+#'         df = hosp,
+#'         intervention_var = "intervention_yr")
 
 ts_plot <- function(formula = NULL,
                     y = NULL,

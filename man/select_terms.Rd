@@ -19,3 +19,28 @@ character vector
 \description{
 Retrieve a list of interaction terms from a sdid model to be passed on for aggregation
 }
+\examples{
+# Fit a staggered difference-in-differences model
+sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                          df = hosp,
+                          intervention_var  = "intervention_yr")
+
+# Select coefficients corresponding to all intervention cohorts in 2018
+terms_2018 <- select_terms(sdid = sdid_hosp,
+                                  selection = list(times = "2018"))
+terms_2018
+
+# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+# intervention
+ave_coeff(sdid_hosp, coefs = terms_2018)
+
+# Select coefficients corresponding to added risk of hospitalization associated with
+# the intervention in the year 2018, but only for the first two cohorts (5 and 6)
+terms_2018_cohorts56 <- staggR::select_terms(sdid = sdid_hosp,
+                                             selection = list(cohorts = c("5", "6"),
+                                                              times = "2018"))
+
+# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+# intervention
+ave_coeff(sdid_hosp, coefs = terms_2018_cohorts56)
+}

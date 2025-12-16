@@ -7,8 +7,12 @@
 #' @param cohort_var name of the variable in `df` that contains cohort assignments.
 #' @param time_var name of the variable in `df` that contains time periods.
 #' @param intervention_var name of the cohort-level variable in `df` that specifies which values in `time_var` correspond to the first post-intervention time period for each cohort.
-#'
+#' @return `tsi` object containing a data frame showing time since intervention for each time period in the data frame for each cohort in the data frame.
 #' @export id_tsi
+#' @examples
+#' # Generate a `tsi` object, containing a data frame showing the time since intervention
+#' # (TSI value) for each time period in the data frame for each cohort.
+#' id_tsi(hosp, cohort_var = "cohort", time_var = "yr", intervention_var = "intervention_yr")
 
 id_tsi <- function(df,
                    cohort_var,

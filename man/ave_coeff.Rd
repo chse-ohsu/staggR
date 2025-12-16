@@ -17,3 +17,20 @@ data.frame
 \description{
 Aggregate a specified set of terms and corresponding standard errors from an sdid model object
 }
+\examples{
+# First fit a model to generate a sdid object
+sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                          df = hosp,
+                          intervention_var  = "intervention_yr")
+
+# Then request an average of a specified set of coefficients. Here we use the
+# select_period() convenience function to automatically select all coefficients
+# representing the post-intervention period.
+ave_coeff(sdid_hosp, coefs = select_period(sdid_hosp, period = "post"))
+
+# We could also specify the coefficients manually. Here we request the average
+# effect for Cohort 5 in the post-intervention period.
+ave_coeff(sdid_hosp, coefs = c("cohort_5:yr_2015", "cohort_5:yr_2016",
+                               "cohort_5:yr_2017", "cohort_5:yr_2018",
+                               "cohort_5:yr_2019", "cohort_5:yr_2020"))
+}

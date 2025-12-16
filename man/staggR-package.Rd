@@ -6,10 +6,10 @@
 \alias{staggR-package}
 \title{staggR: Fit Difference-in-Differences Models With Staggered Interventions}
 \description{
-A package for fitting linear difference-in-differences models in scenarios where intervention roll-outs are staggered over time. The package implements a version of an approach proposed by Sun and Abraham to estimate cohort- and time-since-treatment specific difference-in-differences parameters, and it provides convenience functions both for specifying the model and for flexibly aggregating coefficients to answer a variety of research questions.
+Fits linear difference-in-differences models in scenarios where intervention roll-outs are staggered over time. The package implements a version of an approach proposed by Sun and Abraham to estimate cohort- and time-since-treatment specific difference-in-differences parameters, and it provides convenience functions both for specifying the model and for flexibly aggregating coefficients to answer a variety of research questions.
 }
 \author{
-\strong{Maintainer}: Kyle Hart \email{hartky@ohsu.edu}
+\strong{Maintainer}: Kyle Hart \email{hartky@ohsu.edu} [copyright holder]
 
 Authors:
 \itemize{

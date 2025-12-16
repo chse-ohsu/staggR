@@ -88,6 +88,13 @@ To specify a model, a formula is passed following the format \code{response ~ co
 
 \code{sdid()} also accommodates aggregated data through the \code{weights} argument.
 }
+\examples{
+# Fit a staggered difference-in-differences model
+sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                          df = hosp,
+                          intervention_var  = "intervention_yr")
+summary(sdid_hosp)
+}
 \references{
 Abraham S, Sun L. Estimating Dynamic Treatment Effects in Event Studies with Heterogeneous Treatment Effects. MIT; 2018.
 }

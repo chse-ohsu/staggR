@@ -24,7 +24,10 @@ data.frame
 Prepare a data frame to work with sdid() function
 }
 \examples{
-\dontrun{
-dta_prepped <- prep_data(df, "cohort", "cohort_0", "year", "2010")
-}
+dta_prepped <- prep_data(hosp,
+                         cohort_var = "cohort",
+                         cohort_ref = "0",
+                         time_var = "yr",
+                         time_ref = "2010")
+head(dta_prepped)
 }

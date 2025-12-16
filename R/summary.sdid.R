@@ -3,6 +3,13 @@
 #' @param object an `sdid_mdl` object.
 #' @param ... passed through.
 #' @return an object of class `summary.sdid_mdl`.
+#' @examples
+#' # Fit a staggered difference-in-differences model
+#' sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+#'                   df = hosp,
+#'                   intervention_var  = "intervention_yr")
+#' # Summarize the results
+#' summary(sdid_hosp)
 #' @exportS3Method summary sdid_mdl
 summary.sdid_mdl <- function(object, ...) {
   out <- list(formulas = object$formula,

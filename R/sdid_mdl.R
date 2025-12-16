@@ -11,7 +11,7 @@
 #' @param covariates character vector containing all covariates (other than cohort and time period) used to adjust the model
 #'
 #' @return An object of class "sdid_mdl"
-#' @export
+#' @noRd
 
 new_sdid <- function(mdl, formula, vcov = NULL, tsi, obs_cnt, cohort, time, intervention_var, covariates) {
   if(!all(!vapply(cohort[c("var", "ref", "time_refs")], is.null, logical(1)))) {

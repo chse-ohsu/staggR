@@ -32,3 +32,6 @@ list
 \description{
 Identify time period referents within each cohort.
 }
+\examples{
+pick_time_refs(hosp, "cohort", "0", "yr", "intervention_yr")
+}

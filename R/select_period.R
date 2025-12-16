@@ -6,6 +6,32 @@
 #'
 #' @return character vector
 #' @export select_period
+#' @examples
+#' # Fit a staggered difference-in-differences model
+#' sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+#'                   df = hosp,
+#'                   intervention_var  = "intervention_yr")
+#'
+#' # Select coefficients corresponding to the PRE-intervention period for cohort 5
+#' coef_selection_pre <- select_period(sdid_hosp,
+#'                                 period = "pre",
+#'                                 cohorts = "5")
+#' coef_selection_pre
+#'
+#' # Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+#' # intervention
+#' ave_coeff(sdid_hosp, coefs = coef_selection_pre)
+#'
+#' # Select coefficients corresponding to the POST-intervention period for cohort 5
+#' coef_selection_post <- select_period(sdid_hosp,
+#'                                      period = "post",
+#'                                      cohorts = "5")
+#' coef_selection_post
+#'
+#' # Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+#' # intervention
+#' ave_coeff(sdid_hosp, coefs = coef_selection_post)
+
 
 select_period <- function(sdid, period = "post", cohorts = NULL) {
   # Validate that period is "pre" or "post"

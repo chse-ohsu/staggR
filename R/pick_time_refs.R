@@ -9,6 +9,8 @@
 #'
 #' @return list
 #' @export pick_time_refs
+#' @examples
+#' pick_time_refs(hosp, "cohort", "0", "yr", "intervention_yr")
 
 pick_time_refs <- function(df, cohort_var, cohort_ref, time_var, intervention_var = NULL, time_offset = -1) {
   if(!cohort_var %in% names(df)) stop("Invalid cohort_var")
