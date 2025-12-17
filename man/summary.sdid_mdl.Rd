@@ -19,9 +19,9 @@ Summarize an sdid model
 }
 \examples{
 # Fit a staggered difference-in-differences model
-sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
-                          df = hosp,
-                          intervention_var  = "intervention_yr")
+sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                  df = hosp,
+                  intervention_var  = "intervention_yr")
 # Summarize the results
 summary(sdid_hosp)
 }

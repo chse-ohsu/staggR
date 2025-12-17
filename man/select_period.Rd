@@ -21,9 +21,9 @@ Retrieve a list of interaction terms from a sdid model representing the pre-inte
 }
 \examples{
 # Fit a staggered difference-in-differences model
-sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
-                          df = hosp,
-                          intervention_var  = "intervention_yr")
+sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                  df = hosp,
+                  intervention_var  = "intervention_yr")
 
 # Select coefficients corresponding to the PRE-intervention period for cohort 5
 coef_selection_pre <- select_period(sdid_hosp,

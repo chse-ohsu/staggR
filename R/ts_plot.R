@@ -18,7 +18,7 @@
 #' @export ts_plot
 #' @examples
 #' # Use a formula to specify the setup of the time-series plot. Here we set
-#'   `hospitalized` as the outcome, faceted by `county`, with `yr` on the X axis.
+#' # hospitalized as the outcome, faceted by county, with yr on the X axis.
 #' ts_plot(hospitalized ~ county + yr,
 #'         df = hosp,
 #'         intervention_var = "intervention_yr")

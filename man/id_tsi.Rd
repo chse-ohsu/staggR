@@ -15,6 +15,9 @@ id_tsi(df, cohort_var, time_var, intervention_var)
 
 \item{intervention_var}{name of the cohort-level variable in \code{df} that specifies which values in \code{time_var} correspond to the first post-intervention time period for each cohort.}
 }
+\value{
+\code{tsi} object containing a data frame showing time since intervention for each time period in the data frame for each cohort in the data frame.
+}
 \description{
 \code{id_tsi()} uses a supplied data set to identify the number of time periods away from the intervention each observation is. This is important for plotting and for aggregating model coefficients in \code{ave_coeff()}.
 }
