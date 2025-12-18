@@ -1,13 +1,12 @@
 Package: staggR
 Type: Package
-Title: Fit Difference-in-Differences Models With Staggered Interventions
+Title: Fit Difference-in-Differences Models with Staggered Interventions
 Version: 0.1.0
 Authors@R: c(person("Kyle", "Hart",
                     email = "hartky@ohsu.edu",
                     role = c("aut", "cre", "cph")),
              person("Stephan", "Lindner",
                     role = c("aut")))
-Maintainer: Kyle Hart <hartky@ohsu.edu>
 Description: Fits linear difference-in-differences models in scenarios where
     intervention roll-outs are staggered over time. The package implements a 
     version of an approach proposed by Sun and Abraham (2021) 
@@ -15,11 +14,13 @@ Description: Fits linear difference-in-differences models in scenarios where
     time-since-treatment specific difference-in-differences parameters, and it 
     provides convenience functions both for specifying the model and for 
     flexibly aggregating coefficients to answer a variety of research questions. 
-License: GPL (>= 3)
+URL: https://github.com/chse-ohsu/staggR
+BugReports: https://github.com/chse-ohsu/staggR
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests: 
@@ -28,5 +29,4 @@ Suggests:
     sandwich
 VignetteBuilder: knitr
 Imports: 
-    ggplot2 (>= 3.0.0),
-    stats (>= 4.5.1)
+    ggplot2 (>= 3.0.0)
