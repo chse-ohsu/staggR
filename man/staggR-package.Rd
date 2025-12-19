@@ -12,7 +12,7 @@ Fits linear difference-in-differences models in scenarios where intervention rol
 Useful links:
 \itemize{
   \item \url{https://github.com/chse-ohsu/staggR}
-  \item Report bugs at \url{https://github.com/chse-ohsu/staggR}
+  \item Report bugs at \url{https://github.com/chse-ohsu/staggR/issues}
 }
 
 }

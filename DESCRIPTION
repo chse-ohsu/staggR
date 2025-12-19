@@ -15,7 +15,7 @@ Description: Fits linear difference-in-differences models in scenarios where
     provides convenience functions both for specifying the model and for 
     flexibly aggregating coefficients to answer a variety of research questions. 
 URL: https://github.com/chse-ohsu/staggR
-BugReports: https://github.com/chse-ohsu/staggR
+BugReports: https://github.com/chse-ohsu/staggR/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
