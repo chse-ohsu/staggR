@@ -74,9 +74,14 @@ pq_sample <- pq %>%
   dplyr::sample_frac(0.01,
                      .by = c("yr", "state_abbr"))
 
+#' Define study quarters
+study_qtrs <- pq_sample %>%
+  distinct(yr, qtr) %>%
+  arrange(yr, qtr) %>%
+  mutate(study_qtr = row_number())
 
 moud <-
-pq_sample %>%
+  pq_sample %>%
   # Exclude Puerto Rico
   filter(state_abbr != "PR") %>%
 
@@ -96,57 +101,39 @@ pq_sample %>%
          moud_any) %>%
 
   # Define study quarters
-  mutate(yr_qtr = paste0(yr, "_",
-                         stringr::str_pad(qtr, width = 2, side = "left", pad = "0"))) %>%
+  left_join(study_qtrs,
+            by = c("yr", "qtr")) %>%
 
+  # Define intervention quarters
   left_join(fread(file.path(paths$code, "..", "lookups", "waiver_dates.csv"),
                   select = c(state_abbr = "character",
                              implementation_date = "character")) %>%
-              mutate(implementation_date = lubridate::mdy(implementation_date)),
+              mutate(implementation_date = lubridate::mdy(implementation_date)) %>%
+              mutate(yr = as.character(lubridate::year(implementation_date)),
+                     qtr = as.character(lubridate::quarter(implementation_date))) %>%
+              left_join(study_qtrs %>% rename(imp_qtr = study_qtr)) %>%
+              rename(imp_date = implementation_date) %>%
+              select(state_abbr, imp_date, imp_qtr),
             by = "state_abbr") %>%
-  mutate(implementation_qtr = case_when(is.na(implementation_date) ~ NA_character_,
-                                        TRUE ~ paste0(lubridate::year(implementation_date),
-                                                      "_",
-                                                      sprintf("%02.0f", lubridate::quarter(implementation_date))))) %>%
-  # mutate(grp = factor())
 
   # Assign cohorts
-  arrange(implementation_qtr) %>%
-  mutate(cohort = .GRP,
-         .by = implementation_qtr) %>%
-  mutate(cohort = factor(case_when(is.na(implementation_qtr) ~ 0,
-                                   TRUE ~ cohort),
-                         levels = as.character(0:11)))
+  mutate(cohort = factor(case_when(is.na(imp_qtr) ~ 0,
+                                   TRUE ~ imp_qtr)))
 
-# # Restrict to early-waiver, intermediate- or late-waiver, and selected comparison states
-# mutate(grp = factor(grp, levels = c("Early-waiver states",
-#                                     "All other waiver states",
-#                                     "Non-waiver states")),
-#        study_qtr = factor(as.character(study_qtr),
-#                           levels = as.character(2:20)),
-#        cohort = factor(as.character(cohort),
-#                        levels = as.character(c(0,6:9, 11:16))),
-#        waiver_qtr = case_when(cohort == 0 ~ NA_character_,
-#                               TRUE ~ as.character(cohort)))
 
 #' Double-check groups
 moud %>%
   distinct(state_abbr, cohort) %>%
   arrange(cohort, state_abbr) %>% print(n = Inf)
 
-sdid_moud <- sdid(moud_any ~ cohort + yr_qtr,
+#' Fit model
+sdid_moud <- sdid(moud_any ~ cohort + study_qtr,
                   df = moud,
-                  intervention_var = "implementation_qtr",
+                  intervention_var = "imp_qtr",
                   .vcov = sandwich::vcovCL, cluster = moud$state_abbr)
 
 
 
-saveRDS(sdid_moud, file = file.path("~/.kyle/sdid_moud.RDS"))
-
-
-foo <- readRDS("~/.kyle/sdid_moud.RDS")
-
-summary(foo)
-names(foo)
-foo$tsi
-
+#' Summarize model
+summary(sdid_moud)
+ave_coeff(sdid_moud, coefs = select_period(sdid_moud, "post"))
