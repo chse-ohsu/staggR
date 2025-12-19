@@ -157,7 +157,8 @@ sdid <- function(formula,
   }
 
   # Check that cohort_time_refs is a list object corresponding to cohort levels
-  if(!inherits(cohort_time_refs, "list") | any(sort(names(cohort_time_refs)) != sort(cohort_lvls))) {
+  if(!inherits(cohort_time_refs, "list") | any(sort(as.integer(as.character(names(cohort_time_refs)))) !=
+                                               sort(as.integer(as.character(cohort_lvls))))) {
     stop("cohort_time_refs must be a list object with elements named to match the levels of cohort_var.")
   }
 

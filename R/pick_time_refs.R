@@ -23,7 +23,7 @@ pick_time_refs <- function(df, cohort_var, cohort_ref, time_var, intervention_va
   # define reference periods for each cohort
   if(all(cohort_lvls %in% time_lvls)) {
     time_refs <- lapply(1:length(cohort_lvls), function(i) {
-      time_ref <- as.character(as.integer(cohort_lvls[[i]]) + time_offset)
+      time_ref <- as.character(as.integer(as.character(cohort_lvls[[i]])) + time_offset)
       if(time_ref %in% time_lvls) {
         return(time_ref)
       } else {
