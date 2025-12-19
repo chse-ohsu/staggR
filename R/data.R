@@ -1,10 +1,23 @@
 #' Hospitalization data
 #'
-#' A simulated data set of 15 counties, 11 of which implemented a policy intervention during 2015 - 2018 to reduce hospitalizations. The data set is longitudinal, with each row corresponding to an individual-year.
+#' A simulated data set of 15 counties, 11 of which implemented a policy
+#' intervention during 2015 - 2018 to reduce hospitalizations. The data set is
+#' longitudinal, with each row corresponding to an individual-year.
 #'
-#' Consider a policy intervention designed to reduce inpatient hospitalizations in 15 counties. This longitudinal data set has one row per individual-year. Each individual is identified by a globally unique identifier (`guid`), and we have measures of the individuals' ages, sexes, and comorbidities, and a column indicating whether the individual was hospitalized during the current year.
+#' Consider a policy intervention designed to reduce inpatient hospitalizations
+#' in 15 counties. This longitudinal data set has one row per individual-year.
+#' Each individual is identified by a globally unique identifier (`guid`), and
+#' we have measures of the individuals' ages, sexes, and comorbidities, and a
+#' column indicating whether the individual was hospitalized during the current
+#' year.
 #'
-#' The column `intervention_yr` tells us the year during which each county implemented the intervention. If `intervention_yr` is `NA`, we can conclude that the county never implemented the intervention. Among the 15 counties, 3 implemented the intervention in 2015; 2 counties implemented in 2016; 5 counties implemented in 2017; 1 county implemented in 2018; and 4 counties did not implement the intervention at all during the study period, which runs for 11 years, from 2010 through 2020.
+#' The column `intervention_yr` tells us the year during which each county
+#' implemented the intervention. If `intervention_yr` is `NA`, we can conclude
+#' that the county never implemented the intervention. Among the 15 counties, 3
+#' implemented the intervention in 2015; 2 counties implemented in 2016; 5
+#' counties implemented in 2017; 1 county implemented in 2018; and 4 counties
+#' did not implement the intervention at all during the study period, which runs
+#' for 11 years, from 2010 through 2020.
 #'
 #'
 #' @format ## `hosp`
@@ -25,11 +38,23 @@
 
 #' Aggregated hospitalization data
 #'
-#' A simulated data set of 15 counties, 11 of which implemented a policy intervention during 2015 - 2018 to reduce hospitalizations. The data set is longitudinal and aggregated to county-year.
+#' A simulated data set of 15 counties, 11 of which implemented a policy
+#' intervention during 2015 - 2018 to reduce hospitalizations. The data set is
+#' longitudinal and aggregated to county-year.
 #'
-#' Consider a policy intervention designed to reduce inpatient hospitalizations in 15 counties. This longitudinal data set has one row per county-year and includes aggregated measures of individuals' ages, sexes, and comorbidities, and a column indicating proportion of individuals who were hospitalized during the current year.
+#' Consider a policy intervention designed to reduce inpatient hospitalizations
+#' in 15 counties. This longitudinal data set has one row per county-year and
+#'  includes aggregated measures of individuals' ages, sexes, and comorbidities,
+#'   and a column indicating proportion of individuals who were hospitalized
+#'   during the current year.
 #'
-#' The column `intervention_yr` tells us the year during which each county implemented the intervention. If `intervention_yr` is `NA`, we can conclude that the county never implemented the intervention. Among the 15 counties, 3 implemented the intervention in 2015; 2 counties implemented in 2016; 5 counties implemented in 2017; 1 county implemented in 2018; and 4 counties did not implement the intervention at all during the study period, which runs for 11 years, from 2010 through 2020.
+#' The column `intervention_yr` tells us the year during which each county
+#' implemented the intervention. If `intervention_yr` is `NA`, we can conclude
+#' that the county never implemented the intervention. Among the 15 counties, 3
+#' implemented the intervention in 2015; 2 counties implemented in 2016; 5
+#' counties implemented in 2017; 1 county implemented in 2018; and 4 counties
+#' did not implement the intervention at all during the study period, which runs
+#'  for 11 years, from 2010 through 2020.
 #'
 #'
 #' @format ## `hosp_agg`

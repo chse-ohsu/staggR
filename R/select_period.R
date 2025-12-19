@@ -1,8 +1,11 @@
 #' Retrieve a list of interaction terms from a sdid model representing the pre-intervention period
 #'
-#' @param sdid sdid object
-#' @param period one of 'pre' or 'post', to return the pre-intervention or post-intervention coefficients respectively
-#' @param cohorts character vector containing cohort levels to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected
+#' @param sdid A sdid object
+#' @param period One of 'pre' or 'post', to return the pre-intervention or
+#' post-intervention coefficients respectively
+#' @param cohorts A character vector containing cohort levels to include in the
+#' term selection. If `cohorts` is omitted, all available cohorts will be
+#' selected
 #'
 #' @return character vector
 #' @export select_period

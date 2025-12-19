@@ -30,7 +30,7 @@ terms_2018 <- select_terms(sdid = sdid_hosp,
                                   selection = list(times = "2018"))
 terms_2018
 
-# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+# Pass the set of coefficients to ave_coeff to aggregate the effect of the
 # intervention
 ave_coeff(sdid_hosp, coefs = terms_2018)
 
@@ -40,7 +40,7 @@ terms_2018_cohorts56 <- select_terms(sdid = sdid_hosp,
                                      selection = list(cohorts = c("5", "6"),
                                                       times = "2018"))
 
-# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
+# Pass the set of coefficients to ave_coeff to aggregate the effect of the
 # intervention
 ave_coeff(sdid_hosp, coefs = terms_2018_cohorts56)
 }

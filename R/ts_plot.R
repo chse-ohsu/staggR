@@ -1,19 +1,36 @@
 #' Generates time-series plots, optionally faceted by groups
 #'
 #' @description
-#' `ts_plot` generates time-series plots, optionally faceted by specified groups. The resulting object can be customized using `ggplot2` functions and themes.
+#' Generates time-series plots, optionally faceted by specified groups. The
+#' resulting object can be customized using `ggplot2` functions and themes.
 #'
-#' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under 'Details'.
-#' @param y name of the variable in `df` that contains the outcome of interest. If NULL, this is assumed to be the column named in the left-hand side of `formula`.
-#' @param group name of the variable in `df` that contains cohort assignments or other groups by which the plot should be faceted. If NULL, this is assumed to be the first column named in the right-hand side of `formula`. If no `formula` is specified, the resulting plot will aggregate all results into a single panel.
-#' @param time_var name of the variable in `df` that contains time periods. If NULL, this is assumed to be the second column named in the right-hand side of `formula`.
-#' @param intervention_var name of the cohort-level variable in `df` that specifies which values in `time_var` correspond to the first post-intervention time period for each cohort. If NULL, vertical lines indicating the intervention period will be omitted from the plot.
-#' @param df data frame containing the variables in the model.
-#' @param tsi object of class `tsi`, created by `tsi()`, that defines the number of time periods relative to the intervention time period for each cohort observation.
-#' @param weights an optional vector of weights to be passed to `lm()` to be used in the fitting process. Should be NULL or a numeric vector.
-#' @param ncol number of columns in the faceted plot
+#' @param formula An object of class `formula` (or one that can be coerced to
+#' that class): a symbolic description of the model to be fitted. The details of
+#' model specification are given under 'Details'.
+#' @param y Name of the variable in `df` that contains the outcome of interest.
+#' If NULL, this is assumed to be the column named in the left-hand side of
+#' `formula`.
+#' @param group Name of the variable in `df` that contains cohort assignments or
+#' other groups by which the plot should be faceted. If NULL, this is assumed to
+#' be the first column named in the right-hand side of `formula`. If no
+#' `formula` is specified, the resulting plot will aggregate all results into a
+#' single panel.
+#' @param time_var Name of the variable in `df` that contains time periods. If
+#' NULL, this is assumed to be the second column named in the right-hand side of
+#' `formula`.
+#' @param intervention_var Name of the cohort-level variable in `df` that
+#' specifies which values in `time_var` correspond to the first
+#' post-intervention time period for each cohort. If NULL, vertical lines
+#' indicating the intervention period will be omitted from the plot.
+#' @param df A data frame containing the variables in the model.
+#' @param tsi An object of class `tsi`, created by `tsi()`, that defines the number
+#' of time periods relative to the intervention time period for each cohort
+#' observation.
+#' @param weights An optional vector of weights to be passed to `lm()` to be
+#' used in the fitting process. Should be NULL or a numeric vector.
+#' @param ncol Number of columns in the faceted plot
 #'
-#' @return returns an object of class "ggplot"
+#' @return Returns an object of class "ggplot"
 #' @import ggplot2
 #' @export ts_plot
 #' @examples

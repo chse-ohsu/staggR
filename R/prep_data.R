@@ -1,10 +1,15 @@
 #' Prepare a data frame to work with sdid() function
 #'
-#' @param df data frame containing the variables in the model.
-#' @param cohort_var string specifying the name of the column in `df` that defines the intervention cohorts.
-#' @param cohort_ref an optional string specifying the value of `cohort_var` to be used as the referent in the model. If not specified, the value is taken from the first observed value in `cohort_var`.
-#' @param time_var string specifying the name of the column in `df` that defines time periods over the study.
-#' @param time_ref an optional string specifying the value of `time_var` to be used as the referent in the model.
+#' @param df A data frame containing the variables in the model.
+#' @param cohort_var String specifying the name of the column in `df` that
+#' defines the intervention cohorts.
+#' @param cohort_ref An optional string specifying the value of `cohort_var`
+#' to be used as the referent in the model. If not specified, the value is taken
+#' from the first observed value in `cohort_var`.
+#' @param time_var String specifying the name of the column in `df` that defines
+#' time periods over the study.
+#' @param time_ref An optional string specifying the value of `time_var` to be
+#' used as the referent in the model.
 #'
 #' @return data.frame
 #' @export prep_data

@@ -1,8 +1,8 @@
 #' Summarize an sdid model
 #'
-#' @param object an `sdid_mdl` object.
-#' @param ... passed through.
-#' @return an object of class `summary.sdid_mdl`.
+#' @param object A `sdid_mdl` object.
+#' @param ... Passed through.
+#' @return An object of class `summary.sdid_mdl`.
 #' @examples
 #' # Fit a staggered difference-in-differences model
 #' sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
@@ -30,7 +30,7 @@ summary.sdid_mdl <- function(object, ...) {
 }
 
 # Pretty printer
-#' @exportS3Method print summary.sdid_mdl
+#' @exportS3Method Print summary.sdid_mdl
 print.summary.sdid_mdl <- function(x, precision = 5, ...) {
   # Format top matter
   cat("\nSupplied formula:\n"); print(x$formulas$supplied, showEnv = FALSE)

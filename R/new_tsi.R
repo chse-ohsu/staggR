@@ -1,8 +1,8 @@
 #' Constructor for a tsi object
 #'
-#' @param df df containing times since intervention
+#' @param df A data frame containing times since intervention
 #'
-#' @return An object of class "tsi"
+#' @return An object of class `tsi`
 #' @noRd
 
 new_tsi <- function(df) {

@@ -4,7 +4,8 @@ Title: Fit Difference-in-Differences Models with Staggered Interventions
 Version: 0.1.0
 Authors@R: c(person("Kyle", "Hart",
                     email = "hartky@ohsu.edu",
-                    role = c("aut", "cre", "cph")),
+                    role = c("aut", "cre", "cph"),
+                    comment = c(ORCID = "0000-0001-8964-204X")),
              person("Stephan", "Lindner",
                     role = c("aut")))
 Description: Fits linear difference-in-differences models in scenarios where

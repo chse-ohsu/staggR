@@ -1,11 +1,20 @@
 #' Identify time period referents within each cohort.
 #'
-#' @param df data frame containing the variables in the model.
-#' @param cohort_var string specifying the name of the column in `df` that defines the intervention cohorts.
-#' @param cohort_ref an optional string specifying the value of `cohort_var` to be used as the referent in the model. If not specified, the value is taken from the first observed value in `cohort_var`.
-#' @param time_var string specifying the name of the column in `df` that defines time periods over the study.
-#' @param intervention_var string specifying the name of the column in `df` that defines the intervention period. If values of `cohort_var` are named to match values of `time_var`, this parameter is not necessary.
-#' @param time_offset integer specifying which time period relative to the intervention time period should be used as the referent for each cohort. Defaults to -1, which corresponds to the time period immediately preceding intervention.
+#' @param df A data frame containing the variables in the model.
+#' @param cohort_var String specifying the name of the column in `df` that
+#' defines the intervention cohorts.
+#' @param cohort_ref An optional string specifying the value of `cohort_var` to
+#' be used as the referent in the model. If not specified, the value is taken
+#' from the first observed value in `cohort_var`.
+#' @param time_var String specifying the name of the column in `df` that defines
+#' time periods over the study.
+#' @param intervention_var String specifying the name of the column in `df` that
+#' defines the intervention period. If values of `cohort_var` are named to match
+#' values of `time_var`, this parameter is not necessary.
+#' @param time_offset Integer specifying which time period relative to the
+#' intervention time period should be used as the referent for each cohort.
+#' Defaults to -1, which corresponds to the time period immediately preceding
+#' intervention.
 #'
 #' @return list
 #' @export pick_time_refs

@@ -1,8 +1,15 @@
 #' Retrieve a list of interaction terms from a sdid model to be passed on for aggregation
 #'
-#' @param sdid sdid object
-#' @param coefs optional list of specific terms from `mdl` to be selected
-#' @param selection list object containing values for named elements `cohorts`, `times`, and `tsi`. `cohorts` contains a character vector of cohort levels to include in the term selection; `times` contains a character vector of time period levels to include in the term selection; and `tsi` contains a vector of integers representing the number of units of time relative to each cohort's intervention to include in the term selection. If `cohorts` is omitted, all available cohorts will be selected. One of `times` or `tsi` must be specified. If both are specified, `times` is ignored.
+#' @param sdid A sdid object
+#' @param coefs Optional list of specific terms from `mdl` to be selected
+#' @param selection List object containing values for named elements `cohorts`,
+#' `times`, and `tsi`. `cohorts` contains a character vector of cohort levels to
+#' include in the term selection; `times` contains a character vector of time
+#' period levels to include in the term selection; and `tsi` contains a vector
+#' of integers representing the number of units of time relative to each
+#' cohort's intervention to include in the term selection. If `cohorts` is
+#' omitted, all available cohorts will be selected. One of `times` or `tsi` must
+#' be specified. If both are specified, `times` is ignored.
 #'
 #' @return character vector
 #' @export select_terms
