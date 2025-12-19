@@ -90,9 +90,9 @@ To specify a model, a formula is passed following the format \code{response ~ co
 }
 \examples{
 # Fit a staggered difference-in-differences model
-sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
-                          df = hosp,
-                          intervention_var  = "intervention_yr")
+sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                  df = hosp,
+                  intervention_var  = "intervention_yr")
 summary(sdid_hosp)
 }
 \references{

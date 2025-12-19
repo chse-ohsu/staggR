@@ -19,9 +19,9 @@ Aggregate a specified set of terms and corresponding standard errors from an sdi
 }
 \examples{
 # First fit a model to generate a sdid object
-sdid_hosp <- staggR::sdid(hospitalized ~ cohort + yr + age + sex + comorb,
-                          df = hosp,
-                          intervention_var  = "intervention_yr")
+sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
+                  df = hosp,
+                  intervention_var  = "intervention_yr")
 
 # Then request an average of a specified set of coefficients. Here we use the
 # select_period() convenience function to automatically select all coefficients
