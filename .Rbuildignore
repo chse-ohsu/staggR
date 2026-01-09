@@ -4,6 +4,10 @@
 ^dev$
 ^doc$
 ^Meta$
+^\.github$
+^\.git$
+^\.gitignore$
+^\.Rhistory$
 ^LICENSE\.md$
 ^README\.Rmd$
 ^cran-comments\.md$

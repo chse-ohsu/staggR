@@ -1,7 +1,7 @@
 Package: staggR
 Type: Package
 Title: Fit Difference-in-Differences Models with Staggered Interventions
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(person("Kyle", "Hart",
                     email = "hartky@ohsu.edu",
                     role = c("aut", "cre", "cph"),
