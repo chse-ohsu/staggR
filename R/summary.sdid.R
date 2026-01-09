@@ -30,7 +30,7 @@ summary.sdid_mdl <- function(object, ...) {
 }
 
 # Pretty printer
-#' @exportS3Method Print summary.sdid_mdl
+#' @exportS3Method print summary.sdid_mdl
 print.summary.sdid_mdl <- function(x, precision = 5, ...) {
   # Format top matter
   cat("\nSupplied formula:\n"); print(x$formulas$supplied, showEnv = FALSE)
@@ -57,7 +57,7 @@ print.summary.sdid_mdl <- function(x, precision = 5, ...) {
                              justify = "left")
   cat("\nCoefficients:\n")
   print.data.frame(coefs_output, row.names = FALSE)
-  cat("\nSignificance codes: < 0.001: '**'; < 0.01: '**'; < 0.05: '*'; < 0.1: '.'\n")
+  cat("\nSignificance codes: < 0.001: '***'; < 0.01: '**'; < 0.05: '*'; < 0.1: '.'\n")
 
   # Format bottom matter
   cat(paste0("Residual standard error: ", round(stats::sd(x$residuals), 4), " on ",

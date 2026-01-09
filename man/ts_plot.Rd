@@ -17,29 +17,46 @@ ts_plot(
 )
 }
 \arguments{
-\item{formula}{an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under 'Details'.}
+\item{formula}{An object of class \code{formula} (or one that can be coerced to
+that class): a symbolic description of the model to be fitted. The details of
+model specification are given under 'Details'.}
 
-\item{y}{name of the variable in \code{df} that contains the outcome of interest. If NULL, this is assumed to be the column named in the left-hand side of \code{formula}.}
+\item{y}{Name of the variable in \code{df} that contains the outcome of interest.
+If NULL, this is assumed to be the column named in the left-hand side of
+\code{formula}.}
 
-\item{group}{name of the variable in \code{df} that contains cohort assignments or other groups by which the plot should be faceted. If NULL, this is assumed to be the first column named in the right-hand side of \code{formula}. If no \code{formula} is specified, the resulting plot will aggregate all results into a single panel.}
+\item{group}{Name of the variable in \code{df} that contains cohort assignments or
+other groups by which the plot should be faceted. If NULL, this is assumed to
+be the first column named in the right-hand side of \code{formula}. If no
+\code{formula} is specified, the resulting plot will aggregate all results into a
+single panel.}
 
-\item{time_var}{name of the variable in \code{df} that contains time periods. If NULL, this is assumed to be the second column named in the right-hand side of \code{formula}.}
+\item{time_var}{Name of the variable in \code{df} that contains time periods. If
+NULL, this is assumed to be the second column named in the right-hand side of
+\code{formula}.}
 
-\item{intervention_var}{name of the cohort-level variable in \code{df} that specifies which values in \code{time_var} correspond to the first post-intervention time period for each cohort. If NULL, vertical lines indicating the intervention period will be omitted from the plot.}
+\item{intervention_var}{Name of the cohort-level variable in \code{df} that
+specifies which values in \code{time_var} correspond to the first
+post-intervention time period for each cohort. If NULL, vertical lines
+indicating the intervention period will be omitted from the plot.}
 
-\item{df}{data frame containing the variables in the model.}
+\item{df}{A data frame containing the variables in the model.}
 
-\item{tsi}{object of class \code{tsi}, created by \code{tsi()}, that defines the number of time periods relative to the intervention time period for each cohort observation.}
+\item{tsi}{An object of class \code{tsi}, created by \code{tsi()}, that defines the number
+of time periods relative to the intervention time period for each cohort
+observation.}
 
-\item{weights}{an optional vector of weights to be passed to \code{lm()} to be used in the fitting process. Should be NULL or a numeric vector.}
+\item{weights}{An optional vector of weights to be passed to \code{lm()} to be
+used in the fitting process. Should be NULL or a numeric vector.}
 
-\item{ncol}{number of columns in the faceted plot}
+\item{ncol}{Number of columns in the faceted plot}
 }
 \value{
-returns an object of class "ggplot"
+Returns an object of class "ggplot"
 }
 \description{
-\code{ts_plot} generates time-series plots, optionally faceted by specified groups. The resulting object can be customized using \code{ggplot2} functions and themes.
+Generates time-series plots, optionally faceted by specified groups. The
+resulting object can be customized using \code{ggplot2} functions and themes.
 }
 \examples{
 # Use a formula to specify the setup of the time-series plot. Here we set

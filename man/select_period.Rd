@@ -7,11 +7,14 @@
 select_period(sdid, period = "post", cohorts = NULL)
 }
 \arguments{
-\item{sdid}{sdid object}
+\item{sdid}{A sdid object}
 
-\item{period}{one of 'pre' or 'post', to return the pre-intervention or post-intervention coefficients respectively}
+\item{period}{One of 'pre' or 'post', to return the pre-intervention or
+post-intervention coefficients respectively}
 
-\item{cohorts}{character vector containing cohort levels to include in the term selection. If \code{cohorts} is omitted, all available cohorts will be selected}
+\item{cohorts}{A character vector containing cohort levels to include in the
+term selection. If \code{cohorts} is omitted, all available cohorts will be
+selected}
 }
 \value{
 character vector

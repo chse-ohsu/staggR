@@ -7,12 +7,12 @@
 \method{summary}{sdid_mdl}(object, ...)
 }
 \arguments{
-\item{object}{an \code{sdid_mdl} object.}
+\item{object}{A \code{sdid_mdl} object.}
 
-\item{...}{passed through.}
+\item{...}{Passed through.}
 }
 \value{
-an object of class \code{summary.sdid_mdl}.
+An object of class \code{summary.sdid_mdl}.
 }
 \description{
 Summarize an sdid model

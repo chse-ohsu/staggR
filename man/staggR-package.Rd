@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Kyle Hart \email{hartky@ohsu.edu} [copyright holder]
+\strong{Maintainer}: Kyle Hart \email{hartky@ohsu.edu} (\href{https://orcid.org/0000-0001-8964-204X}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{

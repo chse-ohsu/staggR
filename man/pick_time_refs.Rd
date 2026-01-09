@@ -14,17 +14,26 @@ pick_time_refs(
 )
 }
 \arguments{
-\item{df}{data frame containing the variables in the model.}
+\item{df}{A data frame containing the variables in the model.}
 
-\item{cohort_var}{string specifying the name of the column in \code{df} that defines the intervention cohorts.}
+\item{cohort_var}{String specifying the name of the column in \code{df} that
+defines the intervention cohorts.}
 
-\item{cohort_ref}{an optional string specifying the value of \code{cohort_var} to be used as the referent in the model. If not specified, the value is taken from the first observed value in \code{cohort_var}.}
+\item{cohort_ref}{An optional string specifying the value of \code{cohort_var} to
+be used as the referent in the model. If not specified, the value is taken
+from the first observed value in \code{cohort_var}.}
 
-\item{time_var}{string specifying the name of the column in \code{df} that defines time periods over the study.}
+\item{time_var}{String specifying the name of the column in \code{df} that defines
+time periods over the study.}
 
-\item{intervention_var}{string specifying the name of the column in \code{df} that defines the intervention period. If values of \code{cohort_var} are named to match values of \code{time_var}, this parameter is not necessary.}
+\item{intervention_var}{String specifying the name of the column in \code{df} that
+defines the intervention period. If values of \code{cohort_var} are named to match
+values of \code{time_var}, this parameter is not necessary.}
 
-\item{time_offset}{integer specifying which time period relative to the intervention time period should be used as the referent for each cohort. Defaults to -1, which corresponds to the time period immediately preceding intervention.}
+\item{time_offset}{Integer specifying which time period relative to the
+intervention time period should be used as the referent for each cohort.
+Defaults to -1, which corresponds to the time period immediately preceding
+intervention.}
 }
 \value{
 list

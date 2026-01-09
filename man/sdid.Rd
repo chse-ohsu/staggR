@@ -19,30 +19,47 @@ sdid(
 )
 }
 \arguments{
-\item{formula}{an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted. The details of model specification are given under 'Details'.}
+\item{formula}{An object of class "formula" (or one that can be coerced to
+that class): a symbolic description of the model to be fitted. The details of
+model specification are given under 'Details'.}
 
-\item{df}{data frame containing the variables in the model.}
+\item{df}{A data frame containing the variables in the model.}
 
-\item{weights}{an optional vector of weights to be passed to \code{stats::lm()} to be used in the fitting process. Should be NULL or a numeric vector.}
+\item{weights}{An optional vector of weights to be passed to \code{stats::lm()} to
+be used in the fitting process. Should be NULL or a numeric vector.}
 
-\item{cohort_var}{name of the variable in \code{df} that contains cohort assignments. If NULL, this is assumed to be the first column named in the right hand side of \code{formula}.}
+\item{cohort_var}{Name of the variable in \code{df} that contains cohort
+assignments. If NULL, this is assumed to be the first column named in the
+right hand side of \code{formula}.}
 
-\item{cohort_ref}{value of \code{cohort_var} that serves as the referent for main effects for cohorts. If NULL, this is assumed to the be the first value in the set of values for \code{cohort_var}.}
+\item{cohort_ref}{Value of \code{cohort_var} that serves as the referent for main
+effects for cohorts. If NULL, this is assumed to the be the first value in
+the set of values for \code{cohort_var}.}
 
-\item{cohort_time_refs}{a list, whose elements are named to match levels of \code{cohort_var}, specifying the value of \code{time_var} that serves as the referent for each time interaction with values of \code{cohort_var}. See 'Details.'}
+\item{cohort_time_refs}{A list, whose elements are named to match levels of
+\code{cohort_var}, specifying the value of \code{time_var} that serves as the referent
+for each time interaction with values of \code{cohort_var}. See 'Details.'}
 
-\item{time_var}{name of the variable in \code{df} that contains time periods. If NULL, this is assumed to be the second column named in the right hand side of \code{formula}.}
+\item{time_var}{Name of the variable in \code{df} that contains time periods. If
+NULL, this is assumed to be the second column named in the right hand side of
+\code{formula}.}
 
-\item{time_ref}{value of \code{time_var} that serves as the referent for main effects for time periods. If NULL, this is assumed to the be the first value in the set of values for \code{time_var}.}
+\item{time_ref}{Value of \code{time_var} that serves as the referent for main
+effects for time periods. If NULL, this is assumed to the be the first value
+in the set of values for \code{time_var}.}
 
-\item{intervention_var}{name of the cohort-level variable in \code{df} that specifies which values in \code{time_var} correspond to the first post-intervention time period for each cohort.}
+\item{intervention_var}{Name of the cohort-level variable in \code{df} that
+specifies which values in \code{time_var} correspond to the first
+post-intervention time period for each cohort.}
 
-\item{.vcov}{Function to be used to estimate the variance-covariance matrix. Defaults to stats::vcov}
+\item{.vcov}{Function to be used to estimate the variance-covariance matrix.
+Defaults to stats::vcov.}
 
-\item{...}{additional arguments to be passed to \code{.vcov}.}
+\item{...}{Additional arguments to be passed to \code{.vcov}.}
 }
 \value{
-\code{sdid()} returns an object of class "sdid", which is a list containing the following components:
+Returns an object of class \code{sdid}, which is a list containing the
+following components:
 
 mdl
 : The \code{lm} object returned from the call to \code{stats::lm()} in \code{sdid()}
@@ -71,10 +88,13 @@ covariates
 : A character vector containing the terms in \code{formula} other than those corresponding to cohorts and time periods
 }
 \description{
-\code{sdid} fits a linear staggered difference-in-differences model, following the Abraham and Sun (2018) approach. It facilitates optional weighting and user-specified variance-covariance function.
+Fits a linear staggered difference-in-differences model, following the
+Abraham and Sun (2018) approach. It facilitates optional weighting and
+user-specified variance-covariance function.
 }
 \details{
-Fitting a staggered difference-in-differences model requires deliberate attention to two specific independent variables:
+Fitting a staggered difference-in-differences model requires deliberate
+attention to two specific independent variables:
 \itemize{
 \item The intervention cohort column assigns a cohort name to all individuals or groups having the the intervention during the same time period. For example, if the longitudinal data is at the year level, ranging from 2010 to 2020, and it contains 15 counties, 3 of whom implemented the intervention of interest in 2015, those 3 counties would be assigned to the same cohort. Similarly, if 2 more counties implemented the intervention in 2016, those 2 counties would be assigned to the next cohort.
 \item The time period column assigns each observation to a time period at the most granular level of the longitudinal data. In the example described above, these values would correspond to the years 2010, ..., 2020.
@@ -83,7 +103,7 @@ Fitting a staggered difference-in-differences model requires deliberate attentio
 To specify a model, a formula is passed following the format \code{response ~ cohort_var + time_var + covariates}. This, however, is not the formula use to fit the model; \code{sdid()} expands this formula to include main effects and every possible interaction between \code{cohort_var} and \code{time_var}, excluding referents for identification:
 \itemize{
 \item Referents for main effects are either the first levels \code{cohort_var} and \code{time_var} or the referents specified in \code{cohort_ref} and \code{time_ref}.
-\item Referents for cohort-time interactions are either the factor level of \code{time_var} that immediately precedes the value of \code{intervention_var} within each cohort or the referencts specified in \code{cohort_time_refs}.
+\item Referents for cohort-time interactions are either the factor level of \code{time_var} that immediately precedes the value of \code{intervention_var} within each cohort or the referents specified in \code{cohort_time_refs}.
 }
 
 \code{sdid()} also accommodates aggregated data through the \code{weights} argument.

@@ -7,22 +7,32 @@
 id_tsi(df, cohort_var, time_var, intervention_var)
 }
 \arguments{
-\item{df}{data frame containing the variables in the model.}
+\item{df}{Data frame containing the variables in the model.}
 
-\item{cohort_var}{name of the variable in \code{df} that contains cohort assignments.}
+\item{cohort_var}{Name of the variable in \code{df} that contains cohort
+assignments.}
 
-\item{time_var}{name of the variable in \code{df} that contains time periods.}
+\item{time_var}{Name of the variable in \code{df} that contains time periods.}
 
-\item{intervention_var}{name of the cohort-level variable in \code{df} that specifies which values in \code{time_var} correspond to the first post-intervention time period for each cohort.}
+\item{intervention_var}{Name of the cohort-level variable in \code{df} that
+specifies which values in \code{time_var} correspond to the first
+post-intervention time period for each cohort.}
 }
 \value{
-\code{tsi} object containing a data frame showing time since intervention for each time period in the data frame for each cohort in the data frame.
+\code{tsi} Object containing a data frame showing time since intervention
+for each time period in the data frame for each cohort in the data frame.
 }
 \description{
-\code{id_tsi()} uses a supplied data set to identify the number of time periods away from the intervention each observation is. This is important for plotting and for aggregating model coefficients in \code{ave_coeff()}.
+\code{id_tsi()} identifies the number of time periods relative to the intervention
+for each observation. This information is used for plotting and for
+aggregating model coefficients with \code{ave_coeff()}.
 }
 \examples{
-# Generate a `tsi` object, containing a data frame showing the time since intervention
-# (TSI value) for each time period in the data frame for each cohort.
-id_tsi(hosp, cohort_var = "cohort", time_var = "yr", intervention_var = "intervention_yr")
+# Generate a tsi object, containing a data frame showing the time since
+# intervention (TSI value) for each time period in the data frame for each
+# cohort.
+id_tsi(hosp,
+       cohort_var = "cohort",
+       time_var = "yr",
+       intervention_var = "intervention_yr")
 }

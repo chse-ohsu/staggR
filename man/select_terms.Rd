@@ -7,11 +7,18 @@
 select_terms(sdid, coefs = NULL, selection = NULL)
 }
 \arguments{
-\item{sdid}{sdid object}
+\item{sdid}{A sdid object}
 
-\item{coefs}{optional list of specific terms from \code{mdl} to be selected}
+\item{coefs}{Optional list of specific terms from \code{mdl} to be selected}
 
-\item{selection}{list object containing values for named elements \code{cohorts}, \code{times}, and \code{tsi}. \code{cohorts} contains a character vector of cohort levels to include in the term selection; \code{times} contains a character vector of time period levels to include in the term selection; and \code{tsi} contains a vector of integers representing the number of units of time relative to each cohort's intervention to include in the term selection. If \code{cohorts} is omitted, all available cohorts will be selected. One of \code{times} or \code{tsi} must be specified. If both are specified, \code{times} is ignored.}
+\item{selection}{List object containing values for named elements \code{cohorts},
+\code{times}, and \code{tsi}. \code{cohorts} contains a character vector of cohort levels to
+include in the term selection; \code{times} contains a character vector of time
+period levels to include in the term selection; and \code{tsi} contains a vector
+of integers representing the number of units of time relative to each
+cohort's intervention to include in the term selection. If \code{cohorts} is
+omitted, all available cohorts will be selected. One of \code{times} or \code{tsi} must
+be specified. If both are specified, \code{times} is ignored.}
 }
 \value{
 character vector
@@ -30,7 +37,7 @@ terms_2018 <- select_terms(sdid = sdid_hosp,
                                   selection = list(times = "2018"))
 terms_2018
 
-# Pass the set of coefficients to ave_coeff to aggregate the effect of the
+# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
 # intervention
 ave_coeff(sdid_hosp, coefs = terms_2018)
 
@@ -40,7 +47,7 @@ terms_2018_cohorts56 <- select_terms(sdid = sdid_hosp,
                                      selection = list(cohorts = c("5", "6"),
                                                       times = "2018"))
 
-# Pass the set of coefficients to ave_coeff to aggregate the effect of the
+# Pass the set of coefficients to `ave_coeff` to aggregate the effect of the
 # intervention
 ave_coeff(sdid_hosp, coefs = terms_2018_cohorts56)
 }

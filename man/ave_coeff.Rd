@@ -9,7 +9,8 @@ ave_coeff(sdid, coefs)
 \arguments{
 \item{sdid}{sdid object containing the model to summarize}
 
-\item{coefs}{character vector containing the names of coefficients to aggregate. Can be specified using \code{select_period()} or \code{select_terms()}.}
+\item{coefs}{Character vector containing the names of coefficients to
+aggregate. Can be specified using \code{select_period()} or \code{select_terms()}.}
 }
 \value{
 data.frame
@@ -24,12 +25,12 @@ sdid_hosp <- sdid(hospitalized ~ cohort + yr + age + sex + comorb,
                   intervention_var  = "intervention_yr")
 
 # Then request an average of a specified set of coefficients. Here we use the
-# select_period() convenience function to automatically select all coefficients
-# representing the post-intervention period.
+# select_period() convenience function to automatically select all
+# coefficients representing the post-intervention period.
 ave_coeff(sdid_hosp, coefs = select_period(sdid_hosp, period = "post"))
 
-# We could also specify the coefficients manually. Here we request the average
-# effect for Cohort 5 in the post-intervention period.
+# We could also specify the coefficients manually. Here we request the
+# average effect for Cohort 5 in the post-intervention period.
 ave_coeff(sdid_hosp, coefs = c("cohort_5:yr_2015", "cohort_5:yr_2016",
                                "cohort_5:yr_2017", "cohort_5:yr_2018",
                                "cohort_5:yr_2019", "cohort_5:yr_2020"))
