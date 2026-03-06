@@ -88,7 +88,6 @@
 #'                   intervention_var  = "intervention_yr")
 #' summary(sdid_hosp)
 
-
 sdid <- function(formula,
                  df,
                  weights = NULL,
@@ -119,6 +118,20 @@ sdid <- function(formula,
   # Validate cohort_var, time_var, intervention_var, and covariates
   if(!all(c(cohort_var, time_var, intervention_var, covariates) %in% names(df))) {
     stop("cohort_var, time_var, intervention_var, and all covariates must match column names in df.")
+  }
+
+  # Validate cohort levels
+  if(min(table(df[[cohort_var]])) == 0) {
+    bad_cohort_lvls <- names(table(df[[cohort_var]])[table(df[[cohort_var]]) == 0])
+    stop("The following cohort levels contain no observations: ",
+         paste(bad_cohort_lvls, collapse = ", "))
+  }
+
+  # Validate time levels
+  if(min(table(df[[time_var]])) == 0) {
+    bad_time_lvls <- names(table(df[[time_var]])[table(df[[time_var]]) == 0])
+    stop("The following time periods contain no observations: ",
+         paste(bad_time_lvls, collapse = ", "))
   }
 
   # Make sure intervention_var is consistent within each cohort
