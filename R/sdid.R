@@ -158,7 +158,9 @@ sdid <- function(formula,
   # Prepare data by creating dummy variables
   df_prepped <- prep_data(df = df,
                           cohort_var = cohort_var,
-                          time_var = time_var)
+                          cohort_ref = cohort_ref,
+                          time_var = time_var,
+                          time_ref = time_ref)
 
   # Define dummy variables
   cohort_dummies <- grep(paste0(cohort_var, "_"), names(df_prepped), value = TRUE)
@@ -171,11 +173,11 @@ sdid <- function(formula,
   colnames(obs_cnt) <- c("cohort", "time")
   obs_cnt$n_obs <- mapply(function(cohort, time) {
     if(is.null(weights)) {
-      nrow(df_prepped[eval(parse(text = paste0("df_prepped$", cohort, "==1 & ",
-                                               "df_prepped$", time, "==1"))), ])
+      nrow(df_prepped[eval(parse(text = paste0("df_prepped[[\"", cohort, "\"]]==1 & ",
+                                               "df_prepped[[\"", time, "\"]]==1"))), ])
     } else {
-      sum(df_prepped[eval(parse(text = paste0("df_prepped$", cohort, "==1 & ",
-                                              "df_prepped$", time, "==1"))), weights])
+      sum(df_prepped[eval(parse(text = paste0("df_prepped[[\"", cohort, "\"]]==1 & ",
+                                              "df_prepped[[\"", time, "\"]]==1"))), weights])
     }
   },
   obs_cnt$cohort, obs_cnt$time)
@@ -190,9 +192,12 @@ sdid <- function(formula,
   }
 
   # Check that cohort_time_refs is a list object corresponding to cohort levels
-  if(!inherits(cohort_time_refs, "list") | any(sort(as.integer(as.character(names(cohort_time_refs)))) !=
-                                               sort(as.integer(as.character(cohort_lvls))))) {
-    stop("cohort_time_refs must be a list object with elements named to match the levels of cohort_var.")
+  if(!inherits(cohort_time_refs, "list") | any(sort(as.character(names(cohort_time_refs))) !=
+                                               sort(as.character(cohort_lvls)))) {
+    stop(paste0("cohort_time_refs must be a list object with elements named to match the levels of ",
+                cohort_var, ".\n",
+                "cohort_time_refs contains {", paste(sort(as.character(names(cohort_time_refs))), collapse = ", "),
+                "}, and ", cohort_var, " contains {", paste(sort(as.character(cohort_lvls)), collapse = ", "), "}."))
   }
 
   # Define the regression formula
