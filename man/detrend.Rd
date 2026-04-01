@@ -31,5 +31,4 @@ hosp_det <- detrend(sdid = sdid_hosp,
 sdid_hosp_det <- sdid(hospitalized_detrended ~ cohort + yr + age + sex + comorb,
                       df = hosp_det,
                       intervention_var = "intervention_yr")
-De-trend relative to time since intervention
 }
