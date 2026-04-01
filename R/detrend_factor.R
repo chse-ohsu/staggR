@@ -37,9 +37,9 @@ detrend_factor <- function(sdid, df){
   reg_sigma <- reg_sigma[reg_sigma$tsi < 0, ]
 
   # Sum observations across cohorts by TSI
-  reg_sigma <- aggregate(n_obs ~ tsi,
-                         data = reg_sigma,
-                         FUN = sum)
+  reg_sigma <- stats::aggregate(n_obs ~ tsi,
+                                data = reg_sigma,
+                                FUN = sum)
 
   # Compute sigma for each TSI
   reg_sigma$sigma <- reg_sigma$n_obs / sum(reg_sigma$n_obs, na.rm = TRUE)

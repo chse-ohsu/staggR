@@ -41,7 +41,7 @@ detrend <- function(sdid, df) {
 
   df <- merge(x = df, y = sdid$tsi, all.x = TRUE, by = c("cohort", "time"))
 
-  #' De-trend relative to time since intervention
+  # De-trend relative to time since intervention
   df[[paste0(outcome, "_detrended")]] <-
     df[[outcome]] +
     ifelse(df[[sdid$cohort$var]] == sdid$cohort$ref,
