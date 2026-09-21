@@ -100,7 +100,7 @@ sdid <- function(formula,
 
   # Define dependent variable from formula
   formula <- stats::formula(formula)
-  y <- formula[[2]]
+  y <- as.character(formula[[2]])
 
   # Retrieve RHS terms from formula
   trm <- stats::terms(formula)
@@ -157,13 +157,15 @@ sdid <- function(formula,
 
   # Prepare data by creating dummy variables
   df_prepped <- prep_data(df = df,
+                          y = y,
+                          intervention_var = intervention_var,
+                          covariates = covariates,
                           cohort_var = cohort_var,
                           cohort_ref = cohort_ref,
-                          time_var = time_var,
-                          time_ref = time_ref)
+                          time_var = time_var)
 
   # Define dummy variables
-  cohort_dummies <- grep(paste0(cohort_var, "_"), names(df_prepped), value = TRUE)
+  cohort_dummies <- grep(paste0("^", cohort_var, "_"), names(df_prepped), value = TRUE)
   cohort_lvls <- sub(paste0(cohort_var, "_"), "", cohort_dummies)
   time_dummies <- grep(paste0(time_var, "_"), names(df_prepped), value = TRUE)
   time_lvls <- sub(paste0(time_var, "_"), "", time_dummies)
@@ -205,7 +207,7 @@ sdid <- function(formula,
     paste0(y, " ~ ",
            paste(
              c(cohort_dummies, # Fixed effects for cohorts,
-               time_dummies[time_dummies != paste0(time_var, "_", time_ref)], # Fixed effects for time periods, exclude referent
+               time_dummies[time_dummies != paste0(time_var, "_", make.names(time_ref))], # Fixed effects for time periods, exclude referent
                unlist(lapply(1:length(cohort_dummies), function(x) { # Fixed effects for cohort-time interactions
                  paste(cohort_dummies[[x]],
                        time_dummies[time_dummies != paste0(time_var, "_",
