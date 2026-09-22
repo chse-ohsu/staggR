@@ -22,9 +22,9 @@
 #'
 #' # Select coefficients corresponding to 2 time periods after intervention,
 #' # for cohorts 5 and 6 only
-#' coef_selection_pre5 <- select_tsi(sdid_hosp,
-#'                                   tsi = 2,
-#'                                   cohorts = c("5", "6"))
+#' coef_selection_post2 <- select_tsi(sdid_hosp,
+#'                                    tsi = 2,
+#'                                    cohorts = c("5", "6"))
 #' coef_selection_post2
 
 select_tsi <- function(sdid, tsi = 0, cohorts = NULL) {
@@ -46,6 +46,10 @@ select_tsi <- function(sdid, tsi = 0, cohorts = NULL) {
 
   # Restrict tsi dataset to the specified cohorts
   valid_tsi <- sdid$tsi[sdid$tsi$cohort %in% cohorts, ]
+
+  # Sanitize cohort and time periods in TSI data
+  valid_tsi$cohort <- make.names(valid_tsi$cohort)
+  valid_tsi$time <- make.names(valid_tsi$time)
 
   # Restrict tsi to non-comparison group cohorts
   valid_tsi <- valid_tsi[!is.na(valid_tsi$tsi),]

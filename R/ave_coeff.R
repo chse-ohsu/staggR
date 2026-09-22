@@ -3,6 +3,22 @@
 #' @param sdid sdid object containing the model to summarize
 #' @param coefs Character vector containing the names of coefficients to
 #' aggregate. Can be specified using `select_period()` or `select_terms()`.
+#' @param name Name to be supplied in the `term` column of the returned data
+#' frame.
+#' @param type Optional type of summary the function should provide. Takes
+#' values `es` or `calendar`. If left unspecified, the function aggregates the
+#' coefficients specified in `coefs`. If `es`, the function returns an
+#' event-study summary of the times-since-intervention specified in `times`. If
+#' `calendar`, the function returns a summary of the calendar time periods
+#' specified in `times.`
+#' @param times Only used if `type` is specified. If `type` is `es` and `times`
+#' is unspecified, the function returns an event-study summary for all times
+#' relative to intervention; otherwise, `times` should contain a two-element
+#' integer vector specifying the start and end times since intervention to be
+#' summarized. If `type` is `calendar` and `times` is unspecified, the function
+#' returns a summary of calendar time periods for all time periods observed;
+#' otherwise, `times` should contain a character vector naming the time
+#' periods to summarize.
 #' @return data.frame
 #' @export ave_coeff
 #' @examples
@@ -18,9 +34,17 @@
 #'
 #' # We could also specify the coefficients manually. Here we request the
 #' # average effect for Cohort 5 in the post-intervention period.
-#' ave_coeff(sdid_hosp, coefs = c("cohort_5:yr_2015", "cohort_5:yr_2016",
-#'                                "cohort_5:yr_2017", "cohort_5:yr_2018",
-#'                                "cohort_5:yr_2019", "cohort_5:yr_2020"))
+#' ave_coeff(sdid_hosp, coefs = c("cohort_X5:yr_X2015", "cohort_X5:yr_X2016",
+#'                                "cohort_X5:yr_X2017", "cohort_X5:yr_X2018",
+#'                                "cohort_X5:yr_X2019", "cohort_X5:yr_X2020"))
+#'
+#' # Request an event-study summary for the 4 time periods before intervention
+#' # and the 3 periods after intervention.
+#' ave_coeff(sdid_hosp, type = "es", times = c(-4, 3))
+#'
+#' # Request a summary of the intervention effect for 2012, 2014, 2016, and 2018.
+#' ave_coeff(sdid_hosp, type = "calendar",
+#'           times = c("2012", "2014", "2016", "2018"))
 
 ave_coeff <- function(sdid, coefs, name = "", type = NULL, times = NULL) {
   if(is.null(type)) {
@@ -103,6 +127,10 @@ ave_coeff_es <- function(sdid, times) {
   # Exclude comparison groups from the TSI data frame
   valid_tsi <- sdid$tsi[!is.na(sdid$tsi$tsi),]
 
+  # Sanitize cohort and time periods in TSI data
+  valid_tsi$cohort <- make.names(valid_tsi$cohort)
+  valid_tsi$time <- make.names(valid_tsi$time)
+
   # Choose all TSIs if times is not specified
   if(is.null(times)) {
     times <- c(min(valid_tsi$tsi),
@@ -145,10 +173,17 @@ ave_coeff_calendar <- function(sdid, times) {
   # Exclude comparison groups from the TSI data frame
   valid_tsi <- sdid$tsi[!is.na(sdid$tsi$tsi),]
 
+  # Sanitize cohort and time periods in TSI data
+  valid_tsi$cohort <- make.names(valid_tsi$cohort)
+  valid_tsi$time <- make.names(valid_tsi$time)
+
   # Choose all available years if times is not specified
   if(is.null(times)) {
     times <- unique(valid_tsi$time)
   }
+
+  # Sanitize times parameter
+  times <- make.names(times)
 
   # Validate that times represents valid event times
   if(!all(times %in% valid_tsi$time)) {

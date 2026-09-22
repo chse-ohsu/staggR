@@ -1,25 +1,34 @@
 #' Prepare a data frame to work with sdid() function
 #'
 #' @param df A data frame containing the variables in the model.
+#' @param y Name of outcome variable in `df.
+#' @param intervention_var Name of the cohort-level variable in `df` that
+#' specifies which values in `time_var` correspond to the first
+#' post-intervention time period for each cohort.
 #' @param cohort_var String specifying the name of the column in `df` that
 #' defines the intervention cohorts.
+#' @param covariates Character vector containing the names of covariates to
+#' adjust the regression.
 #' @param cohort_ref An optional string specifying the value of `cohort_var`
 #' to be used as the referent in the model. If not specified, the value is taken
 #' from the first observed value in `cohort_var`.
 #' @param time_var String specifying the name of the column in `df` that defines
 #' time periods over the study.
-#'
+#' @param weights Optional column name containing the counts of observations to
+#' be used as regression weights.
 #' @return data.frame
 #' @export prep_data
 #'
 #' @examples
 #' dta_prepped <- prep_data(hosp,
+#'                          y = "hospitalized",
+#'                          intervention_var = "intervention_yr",
 #'                          cohort_var = "cohort",
 #'                          cohort_ref = "0",
 #'                          time_var = "yr")
 #' head(dta_prepped)
 
-prep_data <- function(df, y, intervention_var, cohort_var, covariates, cohort_ref=NULL, time_var) {
+prep_data <- function(df, y, intervention_var, cohort_var, covariates=NULL, cohort_ref=NULL, time_var, weights=NULL) {
   # Make sure df is a data.frame
   df <- as.data.frame(df)
 
@@ -88,7 +97,7 @@ prep_data <- function(df, y, intervention_var, cohort_var, covariates, cohort_re
   time_dummies <- apply(time_dummies, 2, as.integer)
 
   # Combine with original data, omitting the original cohort and time variables
-  return(cbind(df[, c(y, intervention_var, covariates)],
+  return(cbind(df[, c(y, intervention_var, covariates, weights)],
                cohort_dummies,
                time_dummies))
 }

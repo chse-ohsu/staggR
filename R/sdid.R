@@ -162,7 +162,8 @@ sdid <- function(formula,
                           covariates = covariates,
                           cohort_var = cohort_var,
                           cohort_ref = cohort_ref,
-                          time_var = time_var)
+                          time_var = time_var,
+                          weights = weights)
 
   # Define dummy variables
   cohort_dummies <- grep(paste0("^", cohort_var, "_"), names(df_prepped), value = TRUE)
@@ -194,7 +195,7 @@ sdid <- function(formula,
   }
 
   # Check that cohort_time_refs is a list object corresponding to cohort levels
-  if(!inherits(cohort_time_refs, "list") | any(sort(as.character(names(cohort_time_refs))) !=
+  if(!inherits(cohort_time_refs, "list") | any(sort(make.names(names(cohort_time_refs))) !=
                                                sort(as.character(cohort_lvls)))) {
     stop(paste0("cohort_time_refs must be a list object with elements named to match the levels of ",
                 cohort_var, ".\n",
