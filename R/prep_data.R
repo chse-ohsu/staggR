@@ -59,8 +59,6 @@ prep_data <- function(df, y, intervention_var, cohort_var, covariates=NULL, coho
   if(!inherits(df[[time_var]], "factor")) df[[time_var]] <- factor(df[[time_var]])
 
   # Sanitize cohort and time factor levels
-  # levels(df[[time_var]]) <- gsub("-", "", levels(df[[time_var]]))
-  # levels(df[[cohort_var]]) <- gsub("-", "", levels(df[[time_var]]))
   levels(df[[time_var]]) <- make.names(levels(df[[time_var]]), unique = TRUE)
   levels(df[[cohort_var]]) <- make.names(levels(df[[cohort_var]]), unique = TRUE)
 
