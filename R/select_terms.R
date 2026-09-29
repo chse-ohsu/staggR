@@ -73,8 +73,13 @@ select_terms <- function(sdid, coefs = NULL, selection = NULL) {
                                               times = length(selection$cohorts)))))
     # Check that all terms appear in the list of coefficients
     if(!all(prelim_coefs %in% names(sdid$mdl$coefficients))) {
-      stop("This generates named interaction terms that do not appear in the model's coefficients.")
-    } else coefs <- prelim_coefs
+      bad_coefs <- prelim_coefs[!prelim_coefs %in% names(sdid$mdl$coefficients)]
+      prelim_coefs <- prelim_coefs[prelim_coefs %in% names(sdid$mdl$coefficients)]
+      warning("This generates named interaction terms (",
+              paste(bad_coefs, collapse = ", "),
+              ") that do not appear in the model's coefficients.")
+    }
+    coefs <- prelim_coefs
 
     # The user specified cohorts and tsi
   } else if(is.null(coefs) &
@@ -97,9 +102,9 @@ select_terms <- function(sdid, coefs = NULL, selection = NULL) {
 
     # Exclude referent time periods
     for(cohort_lvl in unique(tsi$cohort)) {
-      tsi$time_ref[tsi$cohort == cohort_lvl] <- sdid$cohort$time_refs[[cohort_lvl]]
+      tsi$time_ref[tsi$cohort == cohort_lvl] <- sdid$cohort$time_refs[[make.names(cohort_lvl)]]
     }
-    tsi <- tsi[tsi$time != tsi$time_ref,]
+    tsi <- tsi[make.names(tsi$time) != tsi$time_ref,]
 
     # If there are invalid tsis passed through the selection list, display a warning
     for(cohort in unique(tsi$cohort)) {
@@ -114,9 +119,9 @@ select_terms <- function(sdid, coefs = NULL, selection = NULL) {
 
     # Now retrieve the values of the relevant interaction terms
     tsi$coefs <- with(tsi,
-                       paste0(sdid$cohort$var, "_", cohort,
+                       paste0(sdid$cohort$var, "_", make.names(cohort),
                               ":",
-                              sdid$time$var, "_", time))
+                              sdid$time$var, "_", make.names(time)))
 
     prelim_coefs <- tsi[, "coefs"]
 

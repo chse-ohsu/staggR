@@ -20,3 +20,8 @@
 * Fixed bug (Issue 10) causing `sdid()` to throw an error if there are other columns in the data frame whose names contain the name of the cohort variable
 * Fixed bug (Issue 11) causing incorrect asterisk indicators of statistical significance from `ave_coeff()`
 * Added functionality to `ave_coeff()` that facilitates producing event-study and calendar time summaries from a `sdid` object
+
+## staggR 0.2.2
+
+* Fixed problem with `select_terms()` not properly sanitizing coefficient names
+* Fixed bug (Issue 13) where if the user specifies referents manually, sdid() fails to omit referents for identification

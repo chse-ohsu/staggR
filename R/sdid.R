@@ -192,6 +192,11 @@ sdid <- function(formula,
                                        cohort_ref = cohort_ref,
                                        time_var = time_var,
                                        intervention_var = intervention_var)
+  } else {
+    # Sanitize cohort_time_refs
+    cohort_time_refs <- lapply(cohort_time_refs, make.names)
+    names(cohort_time_refs) <- make.names(names(cohort_time_refs))
+    cohort_time_refs
   }
 
   # Check that cohort_time_refs is a list object corresponding to cohort levels
