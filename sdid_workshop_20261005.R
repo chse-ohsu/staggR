@@ -1,9 +1,7 @@
-#!/bin/env Rscript
-
 #' ---
 #' title: 'Staggered DiD workshop'
 #' author:
-#' - 'Kyle Hart'
+#' - 'Kyle Hart and Stephan Lindner'
 #' date: '`r format(Sys.time(), "%A, %d %B, %Y")`'
 #' output:
 #'   html_document:
